@@ -48,6 +48,20 @@ Appen kjører bare i prod-gcp, i namespacet `tbd`, på <https://sas-epics.ansatt
 
 Appen leser `GITHUB_TOKEN` fra Nais-secreten `sp-sas-ticket-graf`. Tokenet trenger bare lesetilgang til issuene i `navikt/sas-issues`. Opprett secreten for teamet `tbd` i prod-gcp i [Nais Console](https://console.nav.cloud.nais.io) før første deploy.
 
+### Fornye tokenet
+
+Tokenet utløper etter 90 dager og må fornyes før det. Neste fornyelse: **3. februar 2027**.
+
+1. Lag et nytt fine-grained token på GitHub under Settings → Developer settings → Fine-grained tokens:
+   - Resource owner: `navikt`
+   - Repository access: bare `navikt/sas-issues`
+   - Permissions: Issues: Read-only
+   - Expiration: 90 dager
+2. Vent til navikt har godkjent tokenet, hvis det kreves.
+3. Oppdater `GITHUB_TOKEN` i secreten `sp-sas-ticket-graf` for teamet `tbd` i prod-gcp i [Nais Console](https://console.nav.cloud.nais.io).
+4. Start podden på nytt slik at den leser det nye tokenet.
+5. Oppdater datoen for neste fornyelse i denne README-en.
+
 ## Tester
 
 ```sh
