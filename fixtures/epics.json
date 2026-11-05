@@ -1,0 +1,20 @@
+{
+  "repository": {
+    "labels": {
+      "nodes": [
+        {
+          "description": "Avklare rettighetskategori i sp-rettighetskategori",
+          "name": "epic:avklare-rettighetskategori"
+        },
+        {
+          "description": "Graderte andre ytelser fra saksbehandler",
+          "name": "epic:graderte-andre-ytelser"
+        },
+        {
+          "name": "epic:eksempel",
+          "description": "Oppdiktet epic med alle statuser og blokkeringer fra andre epicer"
+        }
+      ]
+    }
+  }
+}

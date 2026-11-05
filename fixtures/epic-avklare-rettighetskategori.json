@@ -1,0 +1,915 @@
+{
+  "repository": {
+    "issues": {
+      "pageInfo": {
+        "hasNextPage": false,
+        "endCursor": null
+      },
+      "nodes": [
+        {
+          "number": 101,
+          "title": "Avklare rettighetskategori i sp-rettighetskategori",
+          "url": "https://github.com/navikt/sas-issues/issues/101",
+          "state": "OPEN",
+          "closedAt": null,
+          "body": "_Flyttet fra `docs/specs/avklare-rettighetskategori.md` i helse-sas-meta. Ticketene er sub-issues av dette issuet._\n",
+          "repository": {
+            "nameWithOwner": "navikt/sas-issues"
+          },
+          "assignees": {
+            "nodes": []
+          },
+          "labels": {
+            "nodes": [
+              {
+                "name": "spec-issue"
+              },
+              {
+                "name": "epic:avklare-rettighetskategori"
+              }
+            ]
+          },
+          "blockedBy": {
+            "nodes": []
+          }
+        },
+        {
+          "number": 17,
+          "title": "Skjelett for sp-rettighetskategori som svarer på behov",
+          "url": "https://github.com/navikt/sas-issues/issues/17",
+          "state": "CLOSED",
+          "closedAt": "2026-11-04T19:05:46Z",
+          "repository": {
+            "nameWithOwner": "navikt/sas-issues"
+          },
+          "assignees": {
+            "nodes": []
+          },
+          "labels": {
+            "nodes": [
+              {
+                "name": "spec-ticket"
+              },
+              {
+                "name": "epic:avklare-rettighetskategori"
+              }
+            ]
+          },
+          "body": "**Spec:** [Avklare rettighetskategori i sp-rettighetskategori](https://github.com/navikt/helse-sas-meta/blob/main/docs/specs/avklare-rettighetskategori.md)\n\n**Fase:** 1\n\n**Repo:** `sp-rettighetskategori` (nytt), `spedisjon` (bare tilgang)\n\n**Hva skal lages:** En ny app, sp-rettighetskategori, svarer på behovet `Rettighetskategori` for et sykefraværstilfelle med én sendt søknad fra arbeidstaker eller selvstendig næringsdrivende. Appen henter søknaden fra Spedisjon med referanse-ID-en (`@id`), avgjør hovedkategorien, lagrer avgjørelsen og svarer med en rettighetskategori-ID og hovedkategorien. Appen svarer også på `RettighetskategoriResultat`, som slår opp hovedkategorien for en ID.\n\n**Blokkeres av:** Ingen (kan starte med en gang)\n\n## Akseptansekriterier\n\n- [x] Appen er satt opp med sykepenger-gradle-plugins, standard workflows og Nais-manifester i `.nais/`, og er deployet til dev.\n- [x] Appen har egen Postgres-database med Flyway-migreringer.\n- [x] Appen har tilgang til Spedisjons API for meldinger, og Spedisjon tillater kall fra appen.\n- [x] Behovet `Rettighetskategori` med person, skjæringstidspunkt og én søknads-ID gir en løsning med en rettighetskategori-ID og hovedkategorien. Spleis bruker hovedkategorien til å forkaste kategorier den ikke støtter i mottaket av løsningen, men lagrer den ikke.\n- [x] En søknad fra arbeidstaker gir hovedkategorien Arbeidstaker, og en søknad fra selvstendig næringsdrivende gir Selvstendig næringsdrivende.\n- [x] Hver avgjørelse lagres som en ny rad med ID, person, skjæringstidspunkt, hovedkategori, kilde `automatisk`, vurderingstidspunkt, opprettet og søknads-ID-ene som ble brukt.\n- [x] Behovet `RettighetskategoriResultat` med en ID gir hovedkategorien i løsningen.\n- [x] Rapid-tester sender behov inn og sjekker løsningen, med Spedisjon faket i HTTP-klienten og ekte Postgres. Tester å bygge videre på: `OpptjeningsvurderingRiverTest` og `OpptjeningsvurderingResultatRiverTest` i sp-vilkarsproving.\n",
+          "blockedBy": {
+            "nodes": []
+          }
+        },
+        {
+          "number": 18,
+          "title": "Alle søknadstyper, kombinasjoner og idempotens i sp-rettighetskategori",
+          "url": "https://github.com/navikt/sas-issues/issues/18",
+          "state": "CLOSED",
+          "closedAt": "2026-11-04T19:05:48Z",
+          "repository": {
+            "nameWithOwner": "navikt/sas-issues"
+          },
+          "assignees": {
+            "nodes": []
+          },
+          "labels": {
+            "nodes": [
+              {
+                "name": "spec-ticket"
+              },
+              {
+                "name": "epic:avklare-rettighetskategori"
+              }
+            ]
+          },
+          "body": "**Spec:** [Avklare rettighetskategori i sp-rettighetskategori](https://github.com/navikt/helse-sas-meta/blob/main/docs/specs/avklare-rettighetskategori.md)\n\n**Fase:** 1\n\n**Repo:** `sp-rettighetskategori`\n\n**Hva skal lages:** sp-rettighetskategori avgjør riktig hovedkategori for alle søknadstyper som Spleis behandler, og for kombinasjonen arbeidstaker og selvstendig næringsdrivende. Første versjon gir bare hovedkategoriene Arbeidstaker, Selvstendig næringsdrivende og Arbeidstaker og selvstendig næringsdrivende. Samme søknadssett gir samme ID, slik at Spleis kan spørre så ofte den vil. Midlertidige feil hos Spedisjon gir ubesvart behov, slik at Spleis prøver igjen ved påminnelse.\n\n**Blokkeres av:** #17\n\n## Akseptansekriterier\n\n- [x] Hver søknad mappes til yrkesaktivitet på samme måte som Spleis gjør i dag, ut fra søknadstypen og `arbeidssituasjon`. Det gjelder også fisker, jordbruker, barnepasser og «annet».\n- [x] Hovedkategoriene Arbeidstaker, Selvstendig næringsdrivende og Arbeidstaker og selvstendig næringsdrivende kan avgjøres. De andre hovedkategoriene fra `abstraksjoner-kap8.md` er ikke med i kontrakten ennå.\n- [x] Gir en søknad en annen yrkesaktivitet, for eksempel frilanser eller arbeidsledig, svarer ikke tjenesten på behovet, og feilen logges. Det skal ikke skje, fordi Spleis forkaster slike perioder i `Start` med RV_SØ_39 og ikke sender søknader fra forkastede perioder.\n- [x] Tjenesten ser ikke på `andreInntektskilder`.\n- [x] Samme søknadssett for samme person og skjæringstidspunkt gir gjeldende ID og hovedkategori tilbake, uten ny rad.\n- [x] Et endret søknadssett gir en ny automatisk avgjørelse med ny ID.\n- [x] En avgjørelse med kilde `saksbehandler` blir ikke overskrevet av en automatisk avgjørelse for samme søknadssett.\n- [x] Når Spedisjon ikke svarer eller mangler en søknad, svarer ikke tjenesten på behovet, og feilen logges.\n- [x] Rapid-tester dekker mappingen av alle søknadstyper, kombinasjonen AT og SN, at en søknad fra en annen yrkesaktivitet gir ubesvart behov, samme og endret søknadssett, at en overstyring ikke overskrives, og at Spedisjon-feil gir ubesvart behov.\n",
+          "blockedBy": {
+            "nodes": [
+              {
+                "number": 17,
+                "title": "Skjelett for sp-rettighetskategori som svarer på behov",
+                "url": "https://github.com/navikt/sas-issues/issues/17",
+                "state": "CLOSED",
+                "closedAt": "2026-11-04T19:05:46Z",
+                "repository": {
+                  "nameWithOwner": "navikt/sas-issues"
+                },
+                "assignees": {
+                  "nodes": []
+                },
+                "labels": {
+                  "nodes": [
+                    {
+                      "name": "spec-ticket"
+                    },
+                    {
+                      "name": "epic:avklare-rettighetskategori"
+                    }
+                  ]
+                },
+                "blockedBy": {
+                  "nodes": []
+                }
+              }
+            ]
+          }
+        },
+        {
+          "number": 19,
+          "title": "Rettighetskategori-ID på alle vilkårsgrunnlag i Spleis",
+          "url": "https://github.com/navikt/sas-issues/issues/19",
+          "state": "CLOSED",
+          "closedAt": "2026-11-04T19:05:50Z",
+          "repository": {
+            "nameWithOwner": "navikt/sas-issues"
+          },
+          "assignees": {
+            "nodes": []
+          },
+          "labels": {
+            "nodes": [
+              {
+                "name": "spec-ticket"
+              },
+              {
+                "name": "epic:avklare-rettighetskategori"
+              }
+            ]
+          },
+          "body": "**Spec:** [Avklare rettighetskategori i sp-rettighetskategori](https://github.com/navikt/helse-sas-meta/blob/main/docs/specs/avklare-rettighetskategori.md)\n\n**Fase:** 1\n\n**Repo:** `spleis`\n\n**Hva skal lages:** Alle vilkårsgrunnlag i Spleis får feltet `rettighetskategoriId`, som aldri er tomt. En JSON-migrering setter en deterministisk ID på eksisterende vilkårsgrunnlag, og Spleis lager samme ID for nye. Spleis bruker ikke ID-en ennå. Se ADR 0002.\n\n**Blokkeres av:** Ingen (kan starte med en gang)\n\n## Akseptansekriterier\n\n- [x] En JSON-migrering setter `rettighetskategoriId` til `UUID.nameUUIDFromBytes(\"$vilkårsgrunnlagId:Rettighetskategori\")` på alle vilkårsgrunnlag i historikken, både fra Spleis og fra Infotrygd. Den følger V345 og V346 for `opptjeningsvurderingId`.\n- [x] Nye vilkårsgrunnlag, også fra Infotrygd, får samme deterministiske ID når Spleis ikke har en ID fra sp-rettighetskategori.\n- [x] Et kopiert vilkårsgrunnlag beholder ID-en.\n- [x] Feltet ligger i `VilkårsgrunnlagElement` og ikke i undertypene, slik at også det minimale vilkårsgrunnlaget i #20 får det.\n- [x] Feltet er med i DTO-ene og i serialiseringen av personen, og det er ikke nullbart.\n- [x] En migreringstest sjekker at ID-en fra migreringen er den samme som Spleis lager for et nytt vilkårsgrunnlag med samme `vilkårsgrunnlagId`.\n",
+          "blockedBy": {
+            "nodes": []
+          }
+        },
+        {
+          "number": 20,
+          "title": "`AvventerRettighetskategori` i Spleis bak toggle",
+          "url": "https://github.com/navikt/sas-issues/issues/20",
+          "state": "CLOSED",
+          "closedAt": "2026-11-04T19:05:52Z",
+          "repository": {
+            "nameWithOwner": "navikt/sas-issues"
+          },
+          "assignees": {
+            "nodes": []
+          },
+          "labels": {
+            "nodes": [
+              {
+                "name": "spec-ticket"
+              },
+              {
+                "name": "epic:avklare-rettighetskategori"
+              }
+            ]
+          },
+          "body": "**Spec:** [Avklare rettighetskategori i sp-rettighetskategori](https://github.com/navikt/helse-sas-meta/blob/main/docs/specs/avklare-rettighetskategori.md)\n\n**Fase:** 1\n\n**Repo:** `spleis`\n\n**Hva skal lages:** Når togglen for fase 1 er på, går perioder gjennom den nye tilstanden `AvventerRettighetskategori` på vei til vilkårsprøving. Spleis spør sp-rettighetskategori og får tilbake en rettighetskategori-ID og hovedkategorien. Spleis lagrer bare ID-en, i et minimalt vilkårsgrunnlag for skjæringstidspunktet. Det fulle vilkårsgrunnlaget i `AvventerVilkårsprøving` erstatter det minimale og tar med seg ID-en i stedet for den deterministiske. Se ADR 0003. Spleis bruker ikke hovedkategorien i løsningen ennå, og RV_SØ_53 kjører når søknaden kommer inn, som i dag. Når togglen er av, virker Spleis som før, og vilkårsgrunnlaget får deterministisk ID.\n\n**Blokkeres av:** #19. Behovkontrakten står i specen, og testene bruker testløsninger.\n\n## Akseptansekriterier\n\n- [x] Med togglen på går perioden fra `AvventerBlokkerendePeriode` til `AvventerRettighetskategori` og videre til `AvventerVilkårsprøving` når løsningen kommer.\n- [x] Med togglen på går revurdering gjennom `AvventerRettighetskategori` før `AvventerVilkårsprøvingRevurdering`.\n- [x] Perioden går alltid gjennom tilstanden på vei til vilkårsprøving. Spleis sjekker ikke om skjæringstidspunktet allerede har rettighetskategori-ID.\n- [x] Behovet `Rettighetskategori` har person, skjæringstidspunkt og én referanse-ID per yrkesaktivitet med samme skjæringstidspunkt. Hvert arbeidsforhold er en egen yrkesaktivitet.\n- [x] For hver yrkesaktivitet velger Spleis den første perioden, det vil si perioden med tidligste fom blant periodene som ikke er forkastet og har samme skjæringstidspunkt. Perioden trenger ikke å overlappe skjæringstidspunktet.\n- [x] For den første perioden sender Spleis referanse-ID-en til den siste sendte søknaden. Forlengelser er ikke med.\n- [x] Løsningen har ID-en og hovedkategorien. Spleis lagrer bare ID-en, ikke hovedkategorien (ADR 0001). Hovedkategorien finnes ikke i vilkårsgrunnlaget, på behandlingen eller noe annet sted i person-JSON-en, og Spleis bruker den ikke i denne ticketen.\n- [x] `VilkårsgrunnlagElement` har en ny undertype, `Rettighetskategorigrunnlag`, med bare `vilkårsgrunnlagId`, `skjæringstidspunkt` og `rettighetskategoriId`. `Grunnlagsdata` og `InfotrygdVilkårsgrunnlag` får en felles sealed overklasse med `inntektsgrunnlag`, `opptjeningsvurderingId` og `medlemskapsvurderingId`.\n- [x] Løsningen på `Rettighetskategori` lagrer et minimalt vilkårsgrunnlag i et nytt innslag i vilkårsgrunnlagshistorikken. Det erstatter et eldre minimalt vilkårsgrunnlag for samme skjæringstidspunkt, men aldri et fullt.\n- [x] `AvventerVilkårsprøving` og `AvventerVilkårsprøvingRevurdering` henter ID-en fra det minimale vilkårsgrunnlaget, og det fulle vilkårsgrunnlaget erstatter det med samme ID.\n- [x] `vilkårsgrunnlagFor` og annen eksisterende kode som spør etter vilkårsgrunnlaget, ser bare fulle vilkårsgrunnlag. Byggerne for Speil, `OpptjeningApi`, `MedlemskapApi`, `UtkastTilVedtakBuilder` og Spanner-DTO-en hopper over den nye typen.\n- [x] `POST /api/rettighetskategorier` i spleis-api hopper over den nye typen, og `RettighetskategoriApiTest` har en test med en person med minimalt vilkårsgrunnlag. Se #23.\n- [x] JSON-en bruker det eksisterende feltet `type` med den nye verdien `Rettighetskategori`. Eksisterende vilkårsgrunnlag leses uten migrering. I `VilkårsgrunnlagElementData` er `inntektsgrunnlag`, `opptjeningsvurderingId` og `medlemskapsvurderingId` nullbare bare for den nye typen.\n- [x] Støtten for den nye typen i modellen og serde er deployet med togglen av før togglen skrus på. Eldre versjoner av Spleis kan ikke lese typen, så når den er tatt i bruk, går vi tilbake ved å skru av togglen, ikke ved å rulle tilbake koden.\n- [x] En serde-test sjekker at en person med minimalt vilkårsgrunnlag kan lagres og leses igjen, og at eksisterende JSON leses som før.\n- [x] Et ubesvart behov sendes på nytt ved påminnelse.\n- [x] Med togglen av går perioden rett til `AvventerVilkårsprøving`, som i dag. Spleis lager ikke minimalt vilkårsgrunnlag, og det fulle vilkårsgrunnlaget får deterministisk ID.\n- [x] RV_SØ_53 ved søknadshåndtering er uendret uansett toggle.\n- [x] Tilstanden heter `AVVENTER_RETTIGHETSKATEGORI` i `TilstandType`, `TilstandTypeData`, `VedtaksperiodetilstandDto` og `SpannerPersonDto`, og den er med i `vedtaksperiode_endret`. Det er én tilstand for både førstegangsbehandling og revurdering.\n- [x] Tilstanden er med i serde i samme deploy som støtten for det minimale vilkårsgrunnlaget, før togglen skrus på. Eldre versjoner av Spleis kan ikke lese person-JSON med tilstanden.\n- [x] spleis-api mapper tilstanden til `Periodetilstand.ForberederGodkjenning` for Speil, som `AVVENTER_VILKÅRSPRØVING`.\n- [x] Spock og spammer håndterer tilstandsnavnet, se #29. De andre konsumentene av tilstandsnavnene trenger ingen endringer, se «Andre merknader» i specen.\n- [x] Behovet og løsningen med ID og hovedkategori er lagt inn i `BehovkontraktTest`.\n- [x] E2e-tester i sykepenger-model dekker: bare arbeidstaker, bare selvstendig næringsdrivende, forlengelse som ikke går gjennom tilstanden, flere perioder for samme yrkesaktivitet der bare den siste søknaden for den første perioden er med i behovet, to arbeidsgivere der den andre starter etter skjæringstidspunktet, en korrigert søknad for den første perioden, revurdering som flytter skjæringstidspunktet, at det fulle vilkårsgrunnlaget erstatter det minimale med samme ID, et sykefraværstilfelle som forkastes før vilkårsprøving der det minimale vilkårsgrunnlaget forsvinner, ubesvart behov med påminnelse og togglen av.\n\n## Åpne spørsmål\n\n- **Lukket: Filteret i Speil-byggeren.** `VilkårsgrunnlagBuilder` i spleis-api (linje 208) tar bare med komplette vilkårsgrunnlag (`filterIsInstance<VilkårsgrunnlagUtDto.Komplett>()`), så Speil ser ikke det minimale vilkårsgrunnlaget. Vi har bestemt at filteret blir. Speil trenger ikke vilkårsgrunnlaget før perioden er forbi `AvventerVilkårsprøving`, som i dag.\n- **Lukket i ticket #25: Når Spleis ikke lagrer det minimale vilkårsgrunnlaget.** `VilkårsgrunnlagHistorikk.lagre` for `Rettighetskategorigrunnlag` (linje 35–51) lagrer ikke det minimale vilkårsgrunnlaget hvis skjæringstidspunktet allerede har et komplett vilkårsgrunnlag. Spleis logger bare en info-melding. ID-en fra sp-rettighetskategori blir da borte, og det komplette vilkårsgrunnlaget beholder ID-en det hadde fra før. Vi løser dette i fase 3, når Spleis bruker hovedkategorien i løsningen til å forkaste i stedet for RV_SØ_53, se #25.\n",
+          "blockedBy": {
+            "nodes": [
+              {
+                "number": 19,
+                "title": "Rettighetskategori-ID på alle vilkårsgrunnlag i Spleis",
+                "url": "https://github.com/navikt/sas-issues/issues/19",
+                "state": "CLOSED",
+                "closedAt": "2026-11-04T19:05:50Z",
+                "repository": {
+                  "nameWithOwner": "navikt/sas-issues"
+                },
+                "assignees": {
+                  "nodes": []
+                },
+                "labels": {
+                  "nodes": [
+                    {
+                      "name": "spec-ticket"
+                    },
+                    {
+                      "name": "epic:avklare-rettighetskategori"
+                    }
+                  ]
+                },
+                "blockedBy": {
+                  "nodes": []
+                }
+              }
+            ]
+          }
+        },
+        {
+          "number": 21,
+          "title": "Rettighetskategori-ID i opptjeningsbehovet",
+          "url": "https://github.com/navikt/sas-issues/issues/21",
+          "state": "CLOSED",
+          "closedAt": "2026-11-04T19:05:54Z",
+          "repository": {
+            "nameWithOwner": "navikt/sas-issues"
+          },
+          "assignees": {
+            "nodes": []
+          },
+          "labels": {
+            "nodes": [
+              {
+                "name": "spec-ticket"
+              },
+              {
+                "name": "epic:avklare-rettighetskategori"
+              }
+            ]
+          },
+          "body": "**Spec:** [Avklare rettighetskategori i sp-rettighetskategori](https://github.com/navikt/helse-sas-meta/blob/main/docs/specs/avklare-rettighetskategori.md)\n\n**Fase:** 5\n\n**Repo:** `spleis`, `sp-vilkarsproving`\n\n**Hva skal lages:** Spleis sender rettighetskategori-ID-en med i opptjeningsbehovet, slik at sp-vilkarsproving senere kan slå opp kategorien selv. sp-vilkarsproving tar imot ID-en, men bruker den ikke ennå. Ticketen starter når fase 1 er rullet ut. Feltet gjøres påkrevd i #30.\n\n**Blokkeres av:** #22\n\n## Akseptansekriterier\n\n- [x] sp-vilkarsproving tar imot et valgfritt felt med rettighetskategori-ID i opptjeningsbehovet og virker som før med og uten feltet.\n- [x] Spleis sender ID-en fra det minimale vilkårsgrunnlaget i opptjeningsbehovet fra `AvventerVilkårsprøving`. Finnes det ikke noe minimalt vilkårsgrunnlag, sendes ikke feltet.\n- [ ] Spleis og sp-vilkarsproving er deployet. Rekkefølgen spiller ingen rolle, fordi rivere ignorerer felter de ikke kjenner, og feltet er valgfritt i sp-vilkarsproving.\n- [x] Feltet er lagt inn i `BehovkontraktTest` i Spleis og i river-testene i sp-vilkarsproving.\n",
+          "blockedBy": {
+            "nodes": [
+              {
+                "number": 22,
+                "title": "Rulle ut fase 1",
+                "url": "https://github.com/navikt/sas-issues/issues/22",
+                "state": "CLOSED",
+                "closedAt": "2026-11-04T19:05:56Z",
+                "repository": {
+                  "nameWithOwner": "navikt/sas-issues"
+                },
+                "assignees": {
+                  "nodes": []
+                },
+                "labels": {
+                  "nodes": [
+                    {
+                      "name": "spec-ticket"
+                    },
+                    {
+                      "name": "epic:avklare-rettighetskategori"
+                    }
+                  ]
+                },
+                "blockedBy": {
+                  "nodes": [
+                    {
+                      "state": "CLOSED"
+                    },
+                    {
+                      "state": "CLOSED"
+                    },
+                    {
+                      "state": "CLOSED"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "number": 22,
+          "title": "Rulle ut fase 1",
+          "url": "https://github.com/navikt/sas-issues/issues/22",
+          "state": "CLOSED",
+          "closedAt": "2026-11-04T19:05:56Z",
+          "repository": {
+            "nameWithOwner": "navikt/sas-issues"
+          },
+          "assignees": {
+            "nodes": []
+          },
+          "labels": {
+            "nodes": [
+              {
+                "name": "spec-ticket"
+              },
+              {
+                "name": "epic:avklare-rettighetskategori"
+              }
+            ]
+          },
+          "body": "**Spec:** [Avklare rettighetskategori i sp-rettighetskategori](https://github.com/navikt/helse-sas-meta/blob/main/docs/specs/avklare-rettighetskategori.md)\n\n**Fase:** 1\n\n**Repo:** `spleis`, `sp-rettighetskategori`\n\n**Hva skal lages:** Spleis går gjennom `AvventerRettighetskategori` i dev og prod. sp-rettighetskategori lager og lagrer avgjørelser, men Spleis bruker dem ikke. RV_SØ_53 kjører når søknaden kommer inn, som i dag. Togglen for fase 1 fjernes til slutt, slik at bare én toggle er i bruk om gangen.\n\n**Blokkeres av:** #18, #20, #29\n\n## Akseptansekriterier\n\n- [x] Spock og spammer håndterer `AVVENTER_RETTIGHETSKATEGORI` i dev og prod før togglen skrus på. Spock logger ikke «Har ikke påminnelseregler for tilstand AVVENTER_RETTIGHETSKATEGORI».\n- [x] Togglen for fase 1 er på i dev, og bare AT, bare SN og AT og SN med samme skjæringstidspunkt er verifisert ende til ende med ekte søknader. Kombinasjonen forkastes fortsatt med RV_SØ_53 når søknaden kommer inn.\n- [x] Togglen er på i prod, og antall forkastinger med RV_SØ_53 er uendret.\n- [x] Ingen perioder står fast i `AvventerRettighetskategori`.\n- [x] Vilkårsgrunnlag som er laget i prod etter at togglen ble skrudd på, har rettighetskategori-ID-en fra det minimale vilkårsgrunnlaget, og ingen minimale vilkårsgrunnlag ligger igjen for perioder som er forbi vilkårsprøving.\n- [x] Togglen og koden for togglen-av er fjernet fra Spleis.\n",
+          "blockedBy": {
+            "nodes": [
+              {
+                "number": 29,
+                "title": "`AVVENTER_RETTIGHETSKATEGORI` i Spock og spammer",
+                "url": "https://github.com/navikt/sas-issues/issues/29",
+                "state": "CLOSED",
+                "closedAt": "2026-11-04T19:06:07Z",
+                "repository": {
+                  "nameWithOwner": "navikt/sas-issues"
+                },
+                "assignees": {
+                  "nodes": []
+                },
+                "labels": {
+                  "nodes": [
+                    {
+                      "name": "spec-ticket"
+                    },
+                    {
+                      "name": "epic:avklare-rettighetskategori"
+                    }
+                  ]
+                },
+                "blockedBy": {
+                  "nodes": []
+                }
+              },
+              {
+                "number": 20,
+                "title": "`AvventerRettighetskategori` i Spleis bak toggle",
+                "url": "https://github.com/navikt/sas-issues/issues/20",
+                "state": "CLOSED",
+                "closedAt": "2026-11-04T19:05:52Z",
+                "repository": {
+                  "nameWithOwner": "navikt/sas-issues"
+                },
+                "assignees": {
+                  "nodes": []
+                },
+                "labels": {
+                  "nodes": [
+                    {
+                      "name": "spec-ticket"
+                    },
+                    {
+                      "name": "epic:avklare-rettighetskategori"
+                    }
+                  ]
+                },
+                "blockedBy": {
+                  "nodes": [
+                    {
+                      "state": "CLOSED"
+                    }
+                  ]
+                }
+              },
+              {
+                "number": 18,
+                "title": "Alle søknadstyper, kombinasjoner og idempotens i sp-rettighetskategori",
+                "url": "https://github.com/navikt/sas-issues/issues/18",
+                "state": "CLOSED",
+                "closedAt": "2026-11-04T19:05:48Z",
+                "repository": {
+                  "nameWithOwner": "navikt/sas-issues"
+                },
+                "assignees": {
+                  "nodes": []
+                },
+                "labels": {
+                  "nodes": [
+                    {
+                      "name": "spec-ticket"
+                    },
+                    {
+                      "name": "epic:avklare-rettighetskategori"
+                    }
+                  ]
+                },
+                "blockedBy": {
+                  "nodes": [
+                    {
+                      "state": "CLOSED"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "number": 23,
+          "title": "Endepunkt for rettighetskategorier i spleis-api",
+          "url": "https://github.com/navikt/sas-issues/issues/23",
+          "state": "CLOSED",
+          "closedAt": "2026-11-04T19:05:58Z",
+          "repository": {
+            "nameWithOwner": "navikt/sas-issues"
+          },
+          "assignees": {
+            "nodes": []
+          },
+          "labels": {
+            "nodes": [
+              {
+                "name": "spec-ticket"
+              },
+              {
+                "name": "epic:avklare-rettighetskategori"
+              }
+            ]
+          },
+          "body": "**Spec:** [Avklare rettighetskategori i sp-rettighetskategori](https://github.com/navikt/helse-sas-meta/blob/main/docs/specs/avklare-rettighetskategori.md)\n\n**Fase:** 2\n\n**Repo:** `spleis`\n\n**Hva skal lages:** spleis-api får endepunktet `POST /api/rettighetskategorier`, som gir alle rettighetskategori-ID-ene til en person med det sp-rettighetskategori trenger for å avgjøre hovedkategorien slik Spleis gjorde. Endepunktet følger `OpptjeningApi`.\n\n**Blokkeres av:** #19\n\n## Akseptansekriterier\n\n- [x] Endepunktet tar imot fødselsnummer og svarer med én oppføring per rettighetskategori-ID i de fulle vilkårsgrunnlagene i historikken. Minimale vilkårsgrunnlag (`type: Rettighetskategori`) er ikke med, fordi ID-ene deres kommer fra sp-rettighetskategori.\n- [x] Hver oppføring har ID, skjæringstidspunkt, opprettet fra det første historikkinnslaget med ID-en, kilden til vilkårsgrunnlaget (`SPLEIS` eller `INFOTRYGD`) og om inntektsgrunnlaget har selvstendig inntekt.\n- [x] Hver oppføring har yrkesaktivitetstypene til den første vedtaksperioden for hver yrkesaktivitet som bruker vilkårsgrunnlaget, delt i aktive og forkastede perioder. Spleis velger den første perioden slik den gjør i behovet `Rettighetskategori`, hver for seg blant de aktive og de forkastede periodene.\n- [x] En person som ikke finnes i Spleis, gir en tom liste.\n- [x] sp-rettighetskategori har tilgang til endepunktet med Azure-token i dev og prod.\n- [ ] Testene dekker en person med minimalt vilkårsgrunnlag, arbeidstaker, selvstendig, kombinerte og forkastede perioder, flere perioder for samme yrkesaktivitet og vilkårsgrunnlag fra Infotrygd.\n\n## Merknader\n\n- Endepunktet er laget i spleis (commit `5279cc7aee`). Det som gjenstår:\n  - Tilgangen for sp-rettighetskategori er lagt inn i `.nais/spleis-api.yaml`, men er ikke deployet til dev og prod ennå.\n  - Det minimale vilkårsgrunnlaget finnes ikke før #20. Endepunktet velger kilde med en uttømmende `when` over `VilkårsgrunnlagUtDto`, så 04 må ta stilling til den nye typen der. Testen med minimalt vilkårsgrunnlag skrives i 04.\n- Testene for arbeidstaker, selvstendig, kombinerte og forkastede perioder, flere perioder for samme yrkesaktivitet og Infotrygd ligger i `RettighetskategorierTest` og `RettighetskategoriApiTest`.\n- En periode hører til vilkårsgrunnlaget når den har samme skjæringstidspunkt, slik som i behovet `Rettighetskategori`. Vilkårsgrunnlags-ID-en på endringen kan ikke brukes, fordi den først settes ved beregning.\n- Yrkesaktivitetstypen ligger på yrkesaktiviteten og ikke på perioden. Derfor gir hver yrkesaktivitet med minst én periode én oppføring, og det trengs ikke noe eget valg av den første perioden.\n- Kjent unøyaktighet: Flere rettighetskategori-ID-er for samme skjæringstidspunkt får de samme periodene, nemlig de som finnes nå. Kommer det en ny yrkesaktivitet etter den første vilkårsprøvingen, får også den eldste ID-en med den nye yrkesaktiviteten. Den eldste ID-en har eldst `opprettet`, så den blir ikke gjeldende avgjørelse i sp-rettighetskategori.\n- Svaret ser slik ut. Yrkesaktivitetstypene er verdiene i `YrkesaktivitetstypeDto` (`ARBEIDSTAKER`, `SELVSTENDIG`, `FRILANS`, `ARBEIDSLEDIG`), med én verdi per yrkesaktivitet. Fisker, jordbruker og barnepasser er `SELVSTENDIG`.\n\n  ```json\n  {\n    \"rettighetskategorier\": [\n      {\n        \"rettighetskategoriId\": \"22fa796c-aa49-351a-9d95-6be904d95777\",\n        \"skjæringstidspunkt\": \"2018-01-01\",\n        \"opprettet\": \"2022-08-31T09:52:08.494020\",\n        \"kilde\": \"INFOTRYGD\",\n        \"harSelvstendigInntekt\": false,\n        \"yrkesaktivitetstyper\": { \"aktive\": [\"ARBEIDSTAKER\"], \"forkastede\": [] }\n      }\n    ]\n  }\n  ```\n",
+          "blockedBy": {
+            "nodes": [
+              {
+                "number": 19,
+                "title": "Rettighetskategori-ID på alle vilkårsgrunnlag i Spleis",
+                "url": "https://github.com/navikt/sas-issues/issues/19",
+                "state": "CLOSED",
+                "closedAt": "2026-11-04T19:05:50Z",
+                "repository": {
+                  "nameWithOwner": "navikt/sas-issues"
+                },
+                "assignees": {
+                  "nodes": []
+                },
+                "labels": {
+                  "nodes": [
+                    {
+                      "name": "spec-ticket"
+                    },
+                    {
+                      "name": "epic:avklare-rettighetskategori"
+                    }
+                  ]
+                },
+                "blockedBy": {
+                  "nodes": []
+                }
+              }
+            ]
+          }
+        },
+        {
+          "number": 24,
+          "title": "Backfill av historikken i sp-rettighetskategori",
+          "url": "https://github.com/navikt/sas-issues/issues/24",
+          "state": "CLOSED",
+          "closedAt": "2026-11-04T19:06:00Z",
+          "repository": {
+            "nameWithOwner": "navikt/sas-issues"
+          },
+          "assignees": {
+            "nodes": []
+          },
+          "labels": {
+            "nodes": [
+              {
+                "name": "spec-ticket"
+              },
+              {
+                "name": "epic:avklare-rettighetskategori"
+              }
+            ]
+          },
+          "body": "**Spec:** [Avklare rettighetskategori i sp-rettighetskategori](https://github.com/navikt/helse-sas-meta/blob/main/docs/specs/avklare-rettighetskategori.md)\n\n**Fase:** 2\n\n**Repo:** `sp-rettighetskategori`\n\n**Hva skal lages:** sp-rettighetskategori lager avgjørelser for rettighetskategori-ID-er som bare finnes i Spleis. Den henter historikken fra spleis-api ved `person_avstemming` og synkront når den får `RettighetskategoriResultat` for en ID den ikke kjenner. Hovedkategorien blir den samme som Spleis kom fram til. Løsningen følger `PersonAvstemmingService` og fallbacken i `OpptjeningsvurderingResultatRiver` i sp-vilkarsproving.\n\n**Blokkeres av:** #17, #23\n\n## Akseptansekriterier\n\n- [x] Hovedkategorien avgjøres slik specen beskriver, ut fra den første perioden for hver yrkesaktivitet: aktive perioder først, så forkastede perioder, så inntektsgrunnlaget. Vilkårsgrunnlag fra Infotrygd gir Arbeidstaker.\n- [x] Avgjørelser fra backfill lagres med ID-en fra Spleis, kilde `spleis`, vurderingstidspunktet fra opprettet i Spleis og uten søknads-ID-er. Lagringen er idempotent på ID.\n- [x] En avgjørelse fra backfill blir ikke gjeldende når det finnes en automatisk avgjørelse med nyere vurderingstidspunkt for samme person og skjæringstidspunkt.\n- [x] `RettighetskategoriResultat` for en ukjent ID henter historikken for personen, lagrer ID-ene som mangler og svarer. Finnes ID-en heller ikke i Spleis, svarer ikke tjenesten, og feilen logges.\n- [x] `person_avstemming` henter historikken hver gang og lagrer ID-ene som mangler, også for personer som står i migreringsloggen.\n- [x] Hver backfill som lagrer minst én ny ID, føres i migreringsloggen med fødselsnummer, tidspunkt, antall ID-er fra Spleis og antall nye. En backfill uten nye ID-er føres ikke.\n- [x] Rapid-tester dekker ukjent ID, ID som ikke finnes i Spleis, to avstemminger etter hverandre og hovedkategorien for de samme personene som i testene for spleis-api. spleis-api fakes i HTTP-klienten.\n- [x] Backfill er rullet ut i dev og så i prod.\n- [x] Vi har sjekket et utvalg personer i prod der hovedkategorien fra backfill er sammenlignet med hva Spleis gjorde, også for vilkårsgrunnlag der bare forkastede perioder finnes.\n\n## Merknader\n\n- Backfill er laget i sp-rettighetskategori (commit `3ca2770`, omdøpt i `a122058`). Tilgangen til spleis-api i `.nais/sp-rettighetskategori.yaml` og tilgangen for sp-rettighetskategori i `.nais/spleis-api.yaml` i spleis må være deployet før backfill virker.\n- Får en ID fra Spleis yrkesaktivitetstypen `FRILANS` eller `ARBEIDSLEDIG` blant periodene som brukes, feiler backfill for hele personen, og feilen logges. Ingenting lagres, og ingenting føres i migreringsloggen.\n- Feiler backfill ved `person_avstemming`, logges feilen, og meldingen hoppes over. Neste avstemming prøver igjen.\n- En ID som allerede er lagret, blir ikke endret, heller ikke når den er avgjort automatisk. Er ID-en lagret for en annen person, feiler backfill for personen.\n- Migreringsloggen har kolonnene `fødselsnummer`, `opprettet`, `antall_fra_spleis` og `antall_nye`. Om en avgjørelse kommer fra backfill eller er avgjort i sp-rettighetskategori, står i kolonnen `kilde` i `rettighetskategori`.\n- `opprydding-dev` sletter også migreringsloggen til personen.\n",
+          "blockedBy": {
+            "nodes": [
+              {
+                "number": 23,
+                "title": "Endepunkt for rettighetskategorier i spleis-api",
+                "url": "https://github.com/navikt/sas-issues/issues/23",
+                "state": "CLOSED",
+                "closedAt": "2026-11-04T19:05:58Z",
+                "repository": {
+                  "nameWithOwner": "navikt/sas-issues"
+                },
+                "assignees": {
+                  "nodes": []
+                },
+                "labels": {
+                  "nodes": [
+                    {
+                      "name": "spec-ticket"
+                    },
+                    {
+                      "name": "epic:avklare-rettighetskategori"
+                    }
+                  ]
+                },
+                "blockedBy": {
+                  "nodes": [
+                    {
+                      "state": "CLOSED"
+                    }
+                  ]
+                }
+              },
+              {
+                "number": 17,
+                "title": "Skjelett for sp-rettighetskategori som svarer på behov",
+                "url": "https://github.com/navikt/sas-issues/issues/17",
+                "state": "CLOSED",
+                "closedAt": "2026-11-04T19:05:46Z",
+                "repository": {
+                  "nameWithOwner": "navikt/sas-issues"
+                },
+                "assignees": {
+                  "nodes": []
+                },
+                "labels": {
+                  "nodes": [
+                    {
+                      "name": "spec-ticket"
+                    },
+                    {
+                      "name": "epic:avklare-rettighetskategori"
+                    }
+                  ]
+                },
+                "blockedBy": {
+                  "nodes": []
+                }
+              }
+            ]
+          }
+        },
+        {
+          "number": 25,
+          "title": "Forkaste kombinerte rettighetskategorier i Spleis",
+          "url": "https://github.com/navikt/sas-issues/issues/25",
+          "state": "CLOSED",
+          "closedAt": "2026-11-04T19:06:02Z",
+          "repository": {
+            "nameWithOwner": "navikt/sas-issues"
+          },
+          "assignees": {
+            "nodes": []
+          },
+          "labels": {
+            "nodes": [
+              {
+                "name": "spec-ticket"
+              },
+              {
+                "name": "epic:avklare-rettighetskategori"
+              }
+            ]
+          },
+          "body": "**Spec:** [Avklare rettighetskategori i sp-rettighetskategori](https://github.com/navikt/helse-sas-meta/blob/main/docs/specs/avklare-rettighetskategori.md)\n\n**Fase:** 3\n\n**Repo:** `spleis`\n\n**Hva skal lages:** Med togglen for fase 3 på forkaster Spleis kombinerte sykefraværstilfeller på grunnlag av rettighetskategorien, ikke når søknaden kommer inn. Spleis bruker hovedkategorien i løsningen på `Rettighetskategori` når løsningen tas imot i `AvventerRettighetskategori`, men lagrer den ikke. En person med arbeidstaker og selvstendig næringsdrivende med samme skjæringstidspunkt får hele sykefraværstilfellet forkastet med en gang. Perioden som tar imot løsningen, får det nye varselet RV_RK_1, og ingen av periodene blir vilkårsprøvd eller henter ytelser først. Hver hovedkategori Spleis ikke støtter, får sitt eget varsel. I første versjon er Arbeidstaker og selvstendig næringsdrivende den eneste.\n\n**Blokkeres av:** #22\n\n## Akseptansekriterier\n\n- [x] Spleis bruker hovedkategorien i løsningen på `Rettighetskategori` når løsningen tas imot i `AvventerRettighetskategori`. Det er ikke noe eget oppslag med `RettighetskategoriResultat`.\n- [x] Spleis lagrer aldri hovedkategorien, verken i vilkårsgrunnlaget, på behandlingen eller noe annet sted (ADR 0001). Bare ID-en lagres i det minimale vilkårsgrunnlaget.\n- [x] Ny varselkode `RV_RK_1(\"Støtter ikke kombinasjonen arbeidstaker og selvstendig næringsdrivende\")`.\n- [x] Er hovedkategorien Arbeidstaker og selvstendig næringsdrivende, forkaster Spleis sykefraværstilfellet i mottaket av løsningen, på tvers av yrkesaktiviteter. Perioden som tar imot løsningen, får RV_RK_1 og forkastes med den vanlige forkastingen, som tar med overlappende og etterfølgende perioder i samme operasjon. De andre periodene får ingen egen funksjonell feil (avvik fra specen, se merknadene). Spleis lagrer ikke noe minimalt vilkårsgrunnlag, og et eldre minimalt vilkårsgrunnlag for skjæringstidspunktet forsvinner med forkastingen.\n- [x] Ingen av periodene i sykefraværstilfellet blir vilkårsprøvd eller går gjennom `AvventerHistorikk` før de forkastes. Spleis ber ikke om opptjening, medlemskap eller ytelser og beregner ikke perioder i et tilfelle som forkastes med RV_RK_1.\n- [x] Forkastingen tar også med perioder som står i `AvventerVilkårsprøving` med et minimalt vilkårsgrunnlag, og perioder som kom inn etter søknaden, men før løsningen. Sjekken mot forkastede perioder fanger dem ikke.\n- [x] `AvventerVilkårsprøving` slår ikke opp hovedkategorien og forkaster ikke på grunnlag av den.\n- [x] Forkastingen gjelder bare perioder på vei til `AvventerVilkårsprøving`. På vei til `AvventerVilkårsprøvingRevurdering` bruker ikke Spleis hovedkategorien i løsningen.\n- [x] Spleis gir ikke RV_RK_1 til søknader som kommer inn etter forkastingen, og slår ikke opp hovedkategorien for dem. De forkastes av sjekken mot forkastede perioder med et av varslene RV_SØ_31 til RV_SØ_38.\n- [x] Spleis velger varselet med en uttømmende `when` over hovedkategoriene i løsningen. Kommer det en ny hovedkategori i kontrakten, kompilerer ikke Spleis før den har fått sitt eget varsel eller blir støttet.\n- [x] Med togglen på kjører ikke RV_SØ_53 når søknaden kommer inn, så lenge skjæringstidspunktet ikke har et fullt vilkårsgrunnlag og den første perioden i sykefraværstilfellet vil spørre med den nye søknaden. Et minimalt vilkårsgrunnlag teller ikke som fullt.\n- [x] Når skjæringstidspunktet har et fullt vilkårsgrunnlag, kjører RV_SØ_53 som i dag og forkaster bare den nye perioden.\n- [x] Når den første perioden i sykefraværstilfellet allerede har spurt og slutter før den nye perioden starter, kjører RV_SØ_53 som i dag. At den har spurt, betyr at den står i `AvventerRettighetskategori` eller at skjæringstidspunktet har et minimalt vilkårsgrunnlag. Overlapper den nye perioden den første, spør den første perioden på nytt med begge søknadene, og RV_SØ_53 kjører ikke.\n- [x] Med togglen av kjører RV_SØ_53 som i dag, og Spleis bruker ikke hovedkategorien i løsningen.\n- [x] Ny varselkode `RV_RK_3(\"Perioden overlapper med eller ligger inntil en forkastet periode med en annen yrkesaktivitetstype\")`. Med togglen på får en periode varselet når den beregnes i `AvventerHistorikk` eller `AvventerHistorikkRevurdering`, og en forkastet periode med en annen yrkesaktivitetstype overlapper eller ligger inntil den. Varselet hindrer at perioden går automatisk.\n- [x] Sjekken av `andreInntektskilder` og RV_SØ_39 i `Start` er uendret.\n- [x] Vilkårsprøvingen er uendret. Får en periode inntekt fra en annen yrkesaktivitet på skjæringstidspunktet, forkastes den med RV_IV_13 som i dag.\n- [x] E2e-tester for samspillet med konsistenssjekken fra ticket #26, flyttet fra ticket #26:\n  - AT 1.–31. januar og SN 1.–28. februar med samme skjæringstidspunkt, der SN-søknaden kommer mens AT-perioden står i `AvventerVilkårsprøving` med et minimalt vilkårsgrunnlag. SN-perioden forkastes med RV_SØ_53 når søknaden kommer inn, og AT-perioden får RV_RK_3 når den beregnes.\n  - Det samme med togglen av, der SN-perioden forkastes med RV_SØ_53 og AT-perioden ikke får RV_RK_3.\n  - Omvendt rekkefølge: SN 1.–31. januar står i `AvventerVilkårsprøving` med et minimalt vilkårsgrunnlag, og AT 1.–28. februar kommer inn. AT forkastes med RV_SØ_53, og SN får RV_RK_3 når den beregnes.\n- [x] E2e-tester dekker: AT og SN som overlapper skjæringstidspunktet, der begge periodene forkastes i samme hendelse som løsningen og ingen blir vilkårsprøvd eller ber om ytelser, AT 1.–31. januar og SN 1.–28. februar med samme skjæringstidspunkt der begge søknadene er sendt før AT-perioden spør, som også forkaster begge periodene, en søknad som overlapper eller forlenger tilfellet etter forkastingen og får et av varslene RV_SØ_31 til RV_SØ_38, en søknad som kommer inn mens perioden står i `AvventerRettighetskategori`, en søknad som overlapper skjæringstidspunktet og kommer inn mens perioden står i `AvventerVilkårsprøving` med et minimalt vilkårsgrunnlag, en løsning på et eldre behov, en søknad som forlenger en senere periode når den første perioden har spurt, revurdering som flytter skjæringstidspunktet uten forkasting, at hovedkategorien ikke finnes i person-JSON-en, en ny yrkesaktivitet etter utbetaling, en selvstendig søknad rett før en utbetalt arbeidstakerperiode, og togglen av. Testene ligger i `KombinertTest`.\n\n## Fra ticket #26\n\n- Togglen for fase 3 finnes allerede: `Toggle.ValidereRettighetskategori`.\n- Gatingen av RV_SØ_53 hører hit. Løst i `Vedtaksperiode.håndterSøknadFørsteGang`: med togglen på kjører RV_SØ_53 etter at søknaden er lagt til. Den kjører når skjæringstidspunktet til den nye perioden har fullt vilkårsgrunnlag, når en periode av en annen type som overlapper eller ligger inntil, hadde fullt vilkårsgrunnlag før søknaden kom, eller når den første perioden i sykefraværstilfellet har spurt og slutter før den nye perioden.\n- Inntektsfilteret i `Vedtaksperiode.avklarSykepengegrunnlag` er droppet. Se merknadene.\n\n## Åpne spørsmål\n\n- **Lukket: Når Spleis ikke lagrer det minimale vilkårsgrunnlaget (fra ticket #20).** `VilkårsgrunnlagHistorikk.lagre` for `Rettighetskategorigrunnlag` lagrer ikke det minimale vilkårsgrunnlaget hvis skjæringstidspunktet allerede har et fullt vilkårsgrunnlag. Vi har bestemt at hovedkategorien vinner: Sier løsningen at hovedkategorien ikke støttes, forkaster Spleis sykefraværstilfellet med varselet for hovedkategorien, også når skjæringstidspunktet har et fullt vilkårsgrunnlag. Forkastingen skjer før Spleis prøver å lagre noe. Perioden kommer bare til `AvventerRettighetskategori` på vei til `AvventerVilkårsprøving` når skjæringstidspunktet mangler fullt vilkårsgrunnlag, så tilfellet skal sjelden eller aldri skje. Når løsningen støttes, logger Spleis fortsatt bare en info-melding, som før.\n\n## Merknader fra implementasjonen\n\n- Togglen heter `Toggle.ValidereRettighetskategori` (`VALIDERE_RETTIGHETSKATEGORI`). Den er av som standard og er ikke lagt inn i Nais. Ticket #26 bruker den samme togglen, og ticket #27 skrur den på.\n- Bevisst avvik fra specen: Bare perioden som tar imot løsningen, får RV_RK_1. Den forkastes med den vanlige forkastingen (`forkast`), som tar med overlappende og etterfølgende perioder på tvers av yrkesaktiviteter. De andre periodene får ingen egen funksjonell feil. Slik er det ellers i Spleis også: når RV_SØ_53 eller andre feil forkaster, er det bare perioden som utløser forkastingen som får feilen. Sammenligningen i brukerhistorie 37 teller sykefraværstilfeller, og hvert tilfelle har fortsatt minst én RV_RK_1. En tidligere periode som ikke overlapper perioden som spør, forkastes ikke i samme operasjon. Den gjenopptar behandlingen, spør selv og forkastes på sin egen løsning. Normalt er det den første perioden i tilfellet som spør.\n- Med togglen på kjører RV_SØ_53 etter at søknaden er lagt til, fordi skjæringstidspunktet til den nye perioden først er kjent da. Har perioden allerede en funksjonell feil, for eksempel RV_SØ_39 eller et av varslene for forkastede perioder, får den ikke RV_SØ_53 i tillegg. Med togglen av er rekkefølgen som før.\n- En SN-søknad som overlapper en utbetalt AT-periode, forkastes med RV_SØ_53, og AT-perioden blir åpnet for revurdering. Det er det samme som skjer med togglen av.\n- En SN-søknad som ligger rett før en utbetalt AT-periode, flytter skjæringstidspunktet til en dato uten fullt vilkårsgrunnlag. Derfor teller også perioder av en annen type som hadde fullt vilkårsgrunnlag før søknaden kom. Slike søknader forkastes med RV_SØ_53, som i dag. AT-perioden revurderes og får RV_RK_3.\n- Når en selvstendig periode vilkårsprøves, tas ikke arbeidstakerperiodene med samme skjæringstidspunkt med. Har arbeidsgiveren deres inntekt i skatt, blir den regnet som ghost, og perioden forkastes med RV_IV_13. Det er det samme som skjer med togglen av, der arbeidstakerperioden er forkastet med RV_SØ_53 før vilkårsprøvingen.\n- Vi droppet inntektsfilteret i `avklarSykepengegrunnlag`. Det fantes bare for å la en periode som var avgjort, gå videre, slik at kombinasjonen ble forkastet senere med RV_RK_2. I stedet forkaster RV_SØ_53 søknader som den første perioden ikke spør med. Det ligner mer på hvordan Spleis virker med togglen av, og RV_RK_2 fra ticket #26 slår til sjeldnere enn specen først la opp til.\n- RV_RK_3 er nytt. Uten det går en periode automatisk når en periode med en annen yrkesaktivitetstype som overlapper eller ligger inntil, er forkastet med RV_SØ_53. Det gjelder både en periode som forlenges, og en utbetalt periode som revurderes fordi en søknad rett før den er forkastet. Varselet kommer når perioden beregnes, slik at det havner på den åpne behandlingen. Med togglen av gis ikke varselet.\n- Kjent hull med togglen på: SN 1.–31. januar står i `AvventerRettighetskategori`, og en AT-søknad for januar kommer inn. SN-perioden spør på nytt med begge søknadene. Kommer løsningen på det gamle behovet (Selvstendig næringsdrivende) før den nye, tar Spleis den imot, fordi den ikke sjekker hvilket behov løsningen svarer på. Mangler AT-perioden inntektsmelding, feiler vilkårsprøvingen av SN med «Fant ikke noen periode i forventet tilstand». I omvendt rekkefølge (AT først) forkastes AT-perioden med RV_IV_13 i vilkårsprøvingen.\n- En revurdering der løsningen gir Arbeidstaker og selvstendig næringsdrivende, forkastes ikke. Den får RV_RK_2 som varsel i `AvventerHistorikkRevurdering` (ticket #26), så den går ikke automatisk.\n- Testene ligger i `KombinertTest` i sykepenger-model.\n",
+          "blockedBy": {
+            "nodes": [
+              {
+                "number": 22,
+                "title": "Rulle ut fase 1",
+                "url": "https://github.com/navikt/sas-issues/issues/22",
+                "state": "CLOSED",
+                "closedAt": "2026-11-04T19:05:56Z",
+                "repository": {
+                  "nameWithOwner": "navikt/sas-issues"
+                },
+                "assignees": {
+                  "nodes": []
+                },
+                "labels": {
+                  "nodes": [
+                    {
+                      "name": "spec-ticket"
+                    },
+                    {
+                      "name": "epic:avklare-rettighetskategori"
+                    }
+                  ]
+                },
+                "blockedBy": {
+                  "nodes": [
+                    {
+                      "state": "CLOSED"
+                    },
+                    {
+                      "state": "CLOSED"
+                    },
+                    {
+                      "state": "CLOSED"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "number": 26,
+          "title": "Konsistenssjekk av rettighetskategori i `AvventerHistorikk`",
+          "url": "https://github.com/navikt/sas-issues/issues/26",
+          "state": "CLOSED",
+          "closedAt": "2026-11-04T19:06:04Z",
+          "repository": {
+            "nameWithOwner": "navikt/sas-issues"
+          },
+          "assignees": {
+            "nodes": []
+          },
+          "labels": {
+            "nodes": [
+              {
+                "name": "spec-ticket"
+              },
+              {
+                "name": "epic:avklare-rettighetskategori"
+              }
+            ]
+          },
+          "body": "**Spec:** [Avklare rettighetskategori i sp-rettighetskategori](https://github.com/navikt/helse-sas-meta/blob/main/docs/specs/avklare-rettighetskategori.md)\n\n**Fase:** 3\n\n**Repo:** `spleis`\n\n**Hva skal lages:** Med togglen for fase 3 på forkaster Spleis perioder der hovedkategorien ikke stemmer med periodens yrkesaktivitetstype. Det gjelder også forlengelser og revurderinger, som ikke går gjennom vilkårsprøving, og perioder med vilkårsgrunnlag fra før fase 1. En selvstendig forlengelse av et sykefraværstilfelle med hovedkategorien Arbeidstaker blir forkastet med det nye varselet RV_RK_2 når den ikke fanges før. I dag forkastes den med RV_SØ_53. Kommer den etter at skjæringstidspunktet har fullt vilkårsgrunnlag, eller etter at den første perioden i tilfellet har spurt, forkastes den fortsatt med RV_SØ_53 når søknaden kommer inn (ticket #25).\n\n**Blokkeres av:** #22, #24\n\n## Akseptansekriterier\n\n- [x] `AvventerHistorikk` slår opp hovedkategorien med `RettighetskategoriResultat` sammen med ytelsene, slik opptjening gjør.\n- [x] Ny varselkode `RV_RK_2(\"Perioden har en annen yrkesaktivitetstype enn rettighetskategorien\")`.\n- [x] Stemmer ikke hovedkategorien med periodens yrkesaktivitetstype, forkastes perioden med RV_RK_2.\n- [x] Konsistenssjekken er ikke det som forkaster de andre periodene i et kombinert sykefraværstilfelle. De forkastes i mottaket av løsningen i `AvventerRettighetskategori` (ticket #25) og kommer aldri til `AvventerHistorikk`.\n- [x] `AvventerHistorikk` er det eneste stedet Spleis slår opp hovedkategorien med `RettighetskategoriResultat`. Spleis slår alltid opp hovedkategorien når togglen er på. Det finnes ingen vei utenom sjekken for perioder uten rettighetskategori-ID.\n- [x] `RettighetskategoriResultat` er lagt inn i `BehovkontraktTest`.\n- [x] Er `RettighetskategoriResultat` ubesvart, står perioden i `AvventerHistorikk` og sender behovet på nytt ved påminnelse.\n- [x] Tester dekker konsistenssjekken: enhetstester for alle kombinasjoner av hovedkategori og yrkesaktivitetstype (`YtelserRettighetskategoriTest`), og e2e-tester for en forlengelse av et vilkårsgrunnlag fra før fase 1 med deterministisk ID, en forlengelse der hovedkategorien ikke stemmer, og en revurdering der hovedkategorien ikke stemmer. E2e-testen med AT 1.–31. januar og SN 1.–28. februar er flyttet til ticket #25, fordi den krever at RV_SØ_53 ikke kjører før skjæringstidspunktet har fullt vilkårsgrunnlag.\n\n## Merknader fra implementasjonen\n\n- Togglen heter `ValidereRettighetskategori` (`VALIDERE_RETTIGHETSKATEGORI`).\n- Hovedkategorien Arbeidstaker og selvstendig næringsdrivende stemmer ikke med noen yrkesaktivitetstype og gir RV_RK_2. Slike tilfeller skal være forkastet med RV_RK_1 før de kommer hit.\n- I `AvventerHistorikkRevurdering` blir RV_RK_2 et varsel, som andre funksjonelle feil i revurdering.\n- En periode som feiler konsistenssjekken, forkastes før den beregnes. Ellers blir den beregnet mot et vilkårsgrunnlag uten inntekt for yrkesaktivitetstypen, og det gir misvisende varsler som RV_VV_4.\n- Er `RettighetskategoriResultat` ikke sendt med i behovet, for eksempel fordi behovet ble sendt før togglen ble skrudd på, hopper Spleis over sjekken. Påminnelse sender behovet på nytt med det nye feltet.\n- Togglen skal ikke skrus på før ticket #25 er ferdig.\n",
+          "blockedBy": {
+            "nodes": [
+              {
+                "number": 24,
+                "title": "Backfill av historikken i sp-rettighetskategori",
+                "url": "https://github.com/navikt/sas-issues/issues/24",
+                "state": "CLOSED",
+                "closedAt": "2026-11-04T19:06:00Z",
+                "repository": {
+                  "nameWithOwner": "navikt/sas-issues"
+                },
+                "assignees": {
+                  "nodes": []
+                },
+                "labels": {
+                  "nodes": [
+                    {
+                      "name": "spec-ticket"
+                    },
+                    {
+                      "name": "epic:avklare-rettighetskategori"
+                    }
+                  ]
+                },
+                "blockedBy": {
+                  "nodes": [
+                    {
+                      "state": "CLOSED"
+                    },
+                    {
+                      "state": "CLOSED"
+                    }
+                  ]
+                }
+              },
+              {
+                "number": 22,
+                "title": "Rulle ut fase 1",
+                "url": "https://github.com/navikt/sas-issues/issues/22",
+                "state": "CLOSED",
+                "closedAt": "2026-11-04T19:05:56Z",
+                "repository": {
+                  "nameWithOwner": "navikt/sas-issues"
+                },
+                "assignees": {
+                  "nodes": []
+                },
+                "labels": {
+                  "nodes": [
+                    {
+                      "name": "spec-ticket"
+                    },
+                    {
+                      "name": "epic:avklare-rettighetskategori"
+                    }
+                  ]
+                },
+                "blockedBy": {
+                  "nodes": [
+                    {
+                      "state": "CLOSED"
+                    },
+                    {
+                      "state": "CLOSED"
+                    },
+                    {
+                      "state": "CLOSED"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "number": 27,
+          "title": "Skru på togglen for fase 3",
+          "url": "https://github.com/navikt/sas-issues/issues/27",
+          "state": "CLOSED",
+          "closedAt": "2026-11-04T19:06:06Z",
+          "repository": {
+            "nameWithOwner": "navikt/sas-issues"
+          },
+          "assignees": {
+            "nodes": []
+          },
+          "labels": {
+            "nodes": [
+              {
+                "name": "spec-ticket"
+              },
+              {
+                "name": "epic:avklare-rettighetskategori"
+              }
+            ]
+          },
+          "body": "**Spec:** [Avklare rettighetskategori i sp-rettighetskategori](https://github.com/navikt/helse-sas-meta/blob/main/docs/specs/avklare-rettighetskategori.md)\n\n**Fase:** 3\n\n**Repo:** `spleis`, `sp-rettighetskategori`\n\n**Hva er laget:** Fase 3 er prøvd med togglen på i dev. `Toggle.ValidereRettighetskategori` og miljøvariabelen `VALIDERE_RETTIGHETSKATEGORI` er fjernet, og oppførselen med togglen på er permanent og rullet ut i prod. Spleis bruker rettighetskategorien i `AvventerRettighetskategori` og `AvventerHistorikk`, og beholder RV_SØ_53 for søknader som fortsatt skal forkastes ved mottak. Ikke alle personer trenger å ha fått backfill før aktivering, fordi oppslag på ukjente ID-er kjører backfill. Backfill beholdes til ticket #28.\n\n**Blokkeres av:** #25, #26\n\n## Akseptansekriterier\n\n- [x] Togglen og miljøvariabelen er fjernet. Dagens oppførsel med togglen på er permanent, og testene bruker ikke togglen.\n- [ ] Scenarioene fra specen er verifisert ende til ende i dev med ekte søknader: bare AT, bare SN, AT og SN som overlapper skjæringstidspunktet, AT og SN som ligger inntil hverandre med samme skjæringstidspunkt, selvstendig forlengelse av et arbeidstakertilfelle og forlengelse av et vilkårsgrunnlag fra før fase 1.\n- [x] Vi har tall for forkastinger med RV_SØ_53 før fase 3 aktiveres i prod.\n- [x] Backfill er rullet ut i prod, og spørsmålet om forkastede perioder er avklart, se ticket #24.\n- [x] Endringen er deployet og fase 3 er aktiv i prod.\n- [ ] Forkastinger med RV_RK_1, RV_RK_2 og RV_SØ_53 til sammen etter aktivering er sammenlignet med forkastingene med RV_SØ_53 fra før, og avvikene er forklart. Vi teller forkastede sykefraværstilfeller, ikke perioder eller varsler. RV_RK_1 gis bare til perioden som utløser forkastingen, se avviket dokumentert i ticket #25. RV_RK_3 er et varsel, ikke en forkasting, og inngår ikke i summen. Avviket for perioder som ligger inntil hverandre, er beskrevet i specen.\n- [ ] Vi følger med på `RettighetskategoriResultat` som går til spleis-api, og på behov som ikke blir besvart.\n- [x] Ingen hovedkategori er lagret i Spleis. Person-JSON-en har bare rettighetskategori-ID-en.\n- [ ] En kompatibel versjon for tilbakerulling er valgt. Ved tilbakerulling med togglen av kan perioder som venter på `RettighetskategoriResultat`, gå videre ved påminnelse.\n\n## Status før fjerning av togglen\n\nTogglen er på i dev. Teamet har kjørt ende-til-ende-scenarioer med to søknader samtidig, med den første perioden til godkjenning før den andre søknaden kommer, og med vedtak på den første før den andre kommer. Det finnes en baseline for RV_SØ_53. Dette bekrefter ikke at alle scenarioene i akseptansekriteriene er gjennomført.\n\nTicket #24 dokumenterer backfill i prod og kontroll av et utvalg hovedkategorier, også der bare forkastede perioder bruker vilkårsgrunnlaget.\n\n## Implementert\n\nTogglen er fjernet fra produksjonskode, tester og dev-manifestet. Forkastingen med RV_RK_1, konsistenssjekken med RV_RK_2, varselet RV_RK_3 og de gjenværende sjekkene for RV_SØ_53 bruker nå oppførselen som tidligere var bak togglen. Nye ytelsesbehov inneholder alltid `RettighetskategoriResultat`. Null-håndteringen for svar på eldre behov er beholdt.\n\nEndringene er gjennomgått etter rebasen 4. november og beholder den avtalte oppførselen. Den nye kontrakttesten for graderte andre ytelser manglet `RettighetskategoriResultat` blant forventede behov; denne forventningen er lagt til uten å endre produksjonskoden.\n\nEtter rebasen passerer 119 målrettede modelltester og 14 mappingtester for ytelser. `BehovkontraktTest` og `PåminnelserTest` kompilerer, men de 20 databaseavhengige testene stopper ved databaseoppstart fordi agentmiljøet nekter Docker-tilgang. Kontrakttestrettingen må derfor bekreftes ved kjøring i et miljø med Docker-tilgang.\n\nTeamet bekreftet 4. november 2026 at endringen er rullet ut i prod, og ba om å lukke ticketen. Ticketen er ferdig. Uavkryssede kontrollpunkter er ikke dokumentert som gjennomført her og beholdes som oppfølging.\n\n## Aktivering og tilbakerulling\n\nFase 3 er aktivert i prod ved ordinær deploy av kodeendringen, uten en egen toggle-aktivering. Før/etter-sammenligning og observasjon følges opp av teamet.\n\nEtter fjerningen kan fase 3 ikke slås av med en miljøvariabel. Ved behov deployer vi en kjent kompatibel versjon som fortsatt har `ValidereRettighetskategori`, med togglen av. Versjonen må støtte rettighetskategori-ID-er, minimale vilkårsgrunnlag og `AVVENTER_RETTIGHETSKATEGORI`. Vi går ikke tilbake til en versjon fra før disse ble innført. Påminnelse kan da sende ytelsesbehovet på nytt uten `RettighetskategoriResultat`.\n\nBehov som ble sendt før aktiveringen uten `RettighetskategoriResultat`, kan fortsatt besvares og behandles. Denne overgangskompatibiliteten beholdes. Ubesvarte nye behov sendes på nytt ved påminnelse, som før.\n\n## Kjent risiko som følges opp separat\n\nHullet med svar for utdaterte søknadssett fra ticket #25 rettes ikke i denne oppgaven. En periode kan spørre med én søknad og så spørre på nytt med både AT og SN. Kommer svaret på det første behovet først, kan Spleis ta det imot fordi vedtaksperiode og skjæringstidspunkt stemmer. Perioden går videre, og svaret med kombinasjonen ignoreres fordi perioden har forlatt `AvventerRettighetskategori`.\n\n`KombinertTest` dokumenterer AT-først-varianten, der perioden senere forkastes med RV_IV_13 i stedet for RV_RK_1 før vilkårsprøving. Ticket #25 beskriver også at SN først, fulgt av AT uten inntektsmelding, kan feile med «Fant ikke noen periode i forventet tilstand». SN-først-varianten er ikke bekreftet med en egen kjøring i denne oppgaven. Risikoen beholdes etter uttrykkelig avgrensning av toggle-fjerningen.\n",
+          "blockedBy": {
+            "nodes": [
+              {
+                "number": 26,
+                "title": "Konsistenssjekk av rettighetskategori i `AvventerHistorikk`",
+                "url": "https://github.com/navikt/sas-issues/issues/26",
+                "state": "CLOSED",
+                "closedAt": "2026-11-04T19:06:04Z",
+                "repository": {
+                  "nameWithOwner": "navikt/sas-issues"
+                },
+                "assignees": {
+                  "nodes": []
+                },
+                "labels": {
+                  "nodes": [
+                    {
+                      "name": "spec-ticket"
+                    },
+                    {
+                      "name": "epic:avklare-rettighetskategori"
+                    }
+                  ]
+                },
+                "blockedBy": {
+                  "nodes": [
+                    {
+                      "state": "CLOSED"
+                    },
+                    {
+                      "state": "CLOSED"
+                    }
+                  ]
+                }
+              },
+              {
+                "number": 25,
+                "title": "Forkaste kombinerte rettighetskategorier i Spleis",
+                "url": "https://github.com/navikt/sas-issues/issues/25",
+                "state": "CLOSED",
+                "closedAt": "2026-11-04T19:06:02Z",
+                "repository": {
+                  "nameWithOwner": "navikt/sas-issues"
+                },
+                "assignees": {
+                  "nodes": []
+                },
+                "labels": {
+                  "nodes": [
+                    {
+                      "name": "spec-ticket"
+                    },
+                    {
+                      "name": "epic:avklare-rettighetskategori"
+                    }
+                  ]
+                },
+                "blockedBy": {
+                  "nodes": [
+                    {
+                      "state": "CLOSED"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "number": 28,
+          "title": "Fjerne backfill",
+          "url": "https://github.com/navikt/sas-issues/issues/28",
+          "state": "OPEN",
+          "closedAt": null,
+          "repository": {
+            "nameWithOwner": "navikt/sas-issues"
+          },
+          "assignees": {
+            "nodes": []
+          },
+          "labels": {
+            "nodes": [
+              {
+                "name": "spec-ticket"
+              },
+              {
+                "name": "epic:avklare-rettighetskategori"
+              }
+            ]
+          },
+          "body": "**Spec:** [Avklare rettighetskategori i sp-rettighetskategori](https://github.com/navikt/helse-sas-meta/blob/main/docs/specs/avklare-rettighetskategori.md)\n\n**Fase:** 4\n\n**Repo:** `sp-rettighetskategori`, `spleis`\n\n**Hva skal lages:** Når alle personer har fått backfill, svarer sp-rettighetskategori bare fra egen database. Backfill, avhengigheten til spleis-api og togglen for fase 3 fjernes. Dette skjer ikke rett etter fase 3, fordi vi venter på at `person_avstemming` har gått gjennom alle personer.\n\n**Blokkeres av:** #27\n\n## Akseptansekriterier\n\n- [ ] Migreringsloggen har ikke fått nye rader i en full runde med `person_avstemming` etter at fase 3 ble rullet ut i prod. En backfill uten nye ID-er føres ikke i loggen.\n- [ ] Den siste runden med `person_avstemming` fant ingen nye ID-er.\n- [ ] Ingen `RettighetskategoriResultat` har gått til spleis-api den siste tiden, og vi har tall for det.\n- [ ] Fallbacken til spleis-api, avstemmingsriveren og klienten mot spleis-api er fjernet fra sp-rettighetskategori.\n- [ ] Endepunktet `POST /api/rettighetskategorier` og tilgangen for sp-rettighetskategori er fjernet fra spleis-api.\n- [ ] Togglen for fase 3 og koden for togglen-av er fjernet fra Spleis.\n",
+          "blockedBy": {
+            "nodes": [
+              {
+                "number": 27,
+                "title": "Skru på togglen for fase 3",
+                "url": "https://github.com/navikt/sas-issues/issues/27",
+                "state": "CLOSED",
+                "closedAt": "2026-11-04T19:06:06Z",
+                "repository": {
+                  "nameWithOwner": "navikt/sas-issues"
+                },
+                "assignees": {
+                  "nodes": []
+                },
+                "labels": {
+                  "nodes": [
+                    {
+                      "name": "spec-ticket"
+                    },
+                    {
+                      "name": "epic:avklare-rettighetskategori"
+                    }
+                  ]
+                },
+                "blockedBy": {
+                  "nodes": [
+                    {
+                      "state": "CLOSED"
+                    },
+                    {
+                      "state": "CLOSED"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "number": 29,
+          "title": "`AVVENTER_RETTIGHETSKATEGORI` i Spock og spammer",
+          "url": "https://github.com/navikt/sas-issues/issues/29",
+          "state": "CLOSED",
+          "closedAt": "2026-11-04T19:06:07Z",
+          "repository": {
+            "nameWithOwner": "navikt/sas-issues"
+          },
+          "assignees": {
+            "nodes": []
+          },
+          "labels": {
+            "nodes": [
+              {
+                "name": "spec-ticket"
+              },
+              {
+                "name": "epic:avklare-rettighetskategori"
+              }
+            ]
+          },
+          "body": "**Spec:** [Avklare rettighetskategori i sp-rettighetskategori](https://github.com/navikt/helse-sas-meta/blob/main/docs/specs/avklare-rettighetskategori.md)\n\n**Fase:** 1\n\n**Repo:** `spock`, `spammer`\n\n**Hva skal lages:** Spock påminner perioder i `AVVENTER_RETTIGHETSKATEGORI` etter én time, og spammer sender melding til Slack når en periode er påminnet mange ganger i tilstanden. Begge apper lister tilstandsnavnene eksplisitt, så kompilatoren i Spleis fanger dem ikke. Uten endringen havner tilstanden i `else` i Spock: Spock logger en advarsel for hver tilstandsendring og påminner først etter 12 til 30 timer. Et ubesvart behov `Rettighetskategori` blir da liggende i opptil et døgn før Spleis sender det på nytt.\n\n**Blokkeres av:** Ingen. Endringene kan deployes før Spleis sender tilstanden.\n\n## Akseptansekriterier\n\n- [x] `nestePåminnelsetidspunkt` i `Tilstandsendringer.kt` i Spock gir påminnelse etter én time for `AVVENTER_RETTIGHETSKATEGORI`, sammen med `AVVENTER_VILKÅRSPRØVING`.\n- [x] En test i `PåminnelseplanleggerTest` sjekker intervallet for `AVVENTER_RETTIGHETSKATEGORI`.\n- [x] `AVVENTER_RETTIGHETSKATEGORI` er med i `interessanteTilstander` i `PåminnelseMonitor` i spammer.\n- [x] Spock og spammer er deployet i dev og prod før togglen for fase 1 skrus på i dev.\n",
+          "blockedBy": {
+            "nodes": []
+          }
+        },
+        {
+          "number": 30,
+          "title": "Påkrevd rettighetskategori-ID i opptjeningsbehovet",
+          "url": "https://github.com/navikt/sas-issues/issues/30",
+          "state": "OPEN",
+          "closedAt": null,
+          "repository": {
+            "nameWithOwner": "navikt/sas-issues"
+          },
+          "assignees": {
+            "nodes": []
+          },
+          "labels": {
+            "nodes": [
+              {
+                "name": "spec-ticket"
+              },
+              {
+                "name": "epic:avklare-rettighetskategori"
+              }
+            ]
+          },
+          "body": "**Spec:** [Avklare rettighetskategori i sp-rettighetskategori](https://github.com/navikt/helse-sas-meta/blob/main/docs/specs/avklare-rettighetskategori.md)\n\n**Fase:** 5\n\n**Repo:** `sp-vilkarsproving`\n\n**Hva skal lages:** Når alle opptjeningsbehov fra Spleis har rettighetskategori-ID, gjør sp-vilkarsproving feltet påkrevd. Et behov uten ID blir ikke besvart, og perioden blir stående i `AvventerVilkårsprøving` eller `AvventerVilkårsprøvingRevurdering`. Derfor må vi vite at Spleis ikke lenger sender behov uten ID før vi gjør endringen.\n\nSpleis sender ikke ID-en når skjæringstidspunktet mangler minimalt vilkårsgrunnlag. Det kan gjelde perioder som stod i `AvventerVilkårsprøving` eller `AvventerVilkårsprøvingRevurdering` før fase 1, og behov som ble sendt før Spleis begynte å sende feltet, for eksempel behov som venter på `ArbeidsforholdV2`.\n\n**Blokkeres av:** #21\n\n## Akseptansekriterier\n\n- [ ] Før deploy: Opptjeningsbehovene på rapiden viser at Spleis ikke har sendt noen behov uten `rettighetskategoriId` i prod den siste tiden, og vi har tall for det.\n- [ ] Før deploy: Ingen perioder står i `AvventerVilkårsprøving` eller `AvventerVilkårsprøvingRevurdering` uten minimalt vilkårsgrunnlag.\n- [ ] `OpptjeningsvurderingRiver` krever `Opptjeningsvurdering.rettighetskategoriId`, og et behov uten feltet besvares ikke.\n- [ ] River-testene i sp-vilkarsproving dekker behov med og uten feltet.\n",
+          "blockedBy": {
+            "nodes": [
+              {
+                "number": 21,
+                "title": "Rettighetskategori-ID i opptjeningsbehovet",
+                "url": "https://github.com/navikt/sas-issues/issues/21",
+                "state": "CLOSED",
+                "closedAt": "2026-11-04T19:05:54Z",
+                "repository": {
+                  "nameWithOwner": "navikt/sas-issues"
+                },
+                "assignees": {
+                  "nodes": []
+                },
+                "labels": {
+                  "nodes": [
+                    {
+                      "name": "spec-ticket"
+                    },
+                    {
+                      "name": "epic:avklare-rettighetskategori"
+                    }
+                  ]
+                },
+                "blockedBy": {
+                  "nodes": [
+                    {
+                      "state": "CLOSED"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,504 @@
+{
+  "repository": {
+    "issues": {
+      "pageInfo": {
+        "hasNextPage": false,
+        "endCursor": null
+      },
+      "nodes": [
+        {
+          "number": 900,
+          "title": "Eksempel på en epic med alle statuser",
+          "url": "https://github.com/navikt/sas-issues/issues/900",
+          "state": "OPEN",
+          "closedAt": null,
+          "body": "## Problem\n\nOppdiktet spec for mock.\n",
+          "repository": {
+            "nameWithOwner": "navikt/sas-issues"
+          },
+          "assignees": {
+            "nodes": []
+          },
+          "labels": {
+            "nodes": [
+              {
+                "name": "spec-issue"
+              },
+              {
+                "name": "epic:eksempel"
+              }
+            ]
+          },
+          "blockedBy": {
+            "nodes": []
+          }
+        },
+        {
+          "number": 901,
+          "title": "Skjelett for sp-eksempel",
+          "url": "https://github.com/navikt/sas-issues/issues/901",
+          "state": "CLOSED",
+          "closedAt": "2026-10-02T09:12:00Z",
+          "body": "**Fase:** 1\n\n**Repo:** `sp-eksempel`\n\n**Hva skal lages:** Oppdiktet ticket for mock.\n",
+          "repository": {
+            "nameWithOwner": "navikt/sas-issues"
+          },
+          "assignees": {
+            "nodes": []
+          },
+          "labels": {
+            "nodes": [
+              {
+                "name": "spec-ticket"
+              },
+              {
+                "name": "epic:eksempel"
+              }
+            ]
+          },
+          "blockedBy": {
+            "nodes": []
+          }
+        },
+        {
+          "number": 902,
+          "title": "Behov og løsning for eksempelet",
+          "url": "https://github.com/navikt/sas-issues/issues/902",
+          "state": "CLOSED",
+          "closedAt": "2026-10-15T13:40:00Z",
+          "body": "**Fase:** 1\n\n**Repo:** `sp-eksempel`, `spleis`\n\n**Hva skal lages:** Oppdiktet ticket for mock.\n",
+          "repository": {
+            "nameWithOwner": "navikt/sas-issues"
+          },
+          "assignees": {
+            "nodes": []
+          },
+          "labels": {
+            "nodes": [
+              {
+                "name": "spec-ticket"
+              },
+              {
+                "name": "epic:eksempel"
+              }
+            ]
+          },
+          "blockedBy": {
+            "nodes": [
+              {
+                "number": 901,
+                "title": "Skjelett for sp-eksempel",
+                "url": "https://github.com/navikt/sas-issues/issues/901",
+                "state": "CLOSED",
+                "closedAt": "2026-10-02T09:12:00Z",
+                "repository": {
+                  "nameWithOwner": "navikt/sas-issues"
+                },
+                "assignees": {
+                  "nodes": []
+                },
+                "labels": {
+                  "nodes": [
+                    {
+                      "name": "spec-ticket"
+                    },
+                    {
+                      "name": "epic:eksempel"
+                    }
+                  ]
+                },
+                "blockedBy": {
+                  "nodes": []
+                }
+              }
+            ]
+          }
+        },
+        {
+          "number": 903,
+          "title": "Ny tilstand i Spleis bak toggle",
+          "url": "https://github.com/navikt/sas-issues/issues/903",
+          "state": "OPEN",
+          "closedAt": null,
+          "body": "**Fase:** 1\n\n**Repo:** `spleis`\n\n**Hva skal lages:** Oppdiktet ticket for mock.\n",
+          "repository": {
+            "nameWithOwner": "navikt/sas-issues"
+          },
+          "assignees": {
+            "nodes": [
+              {
+                "login": "kari-nordmann",
+                "avatarUrl": null
+              }
+            ]
+          },
+          "labels": {
+            "nodes": [
+              {
+                "name": "spec-ticket"
+              },
+              {
+                "name": "epic:eksempel"
+              }
+            ]
+          },
+          "blockedBy": {
+            "nodes": [
+              {
+                "number": 902,
+                "title": "Behov og løsning for eksempelet",
+                "url": "https://github.com/navikt/sas-issues/issues/902",
+                "state": "CLOSED",
+                "closedAt": "2026-10-15T13:40:00Z",
+                "repository": {
+                  "nameWithOwner": "navikt/sas-issues"
+                },
+                "assignees": {
+                  "nodes": []
+                },
+                "labels": {
+                  "nodes": [
+                    {
+                      "name": "spec-ticket"
+                    },
+                    {
+                      "name": "epic:eksempel"
+                    }
+                  ]
+                },
+                "blockedBy": {
+                  "nodes": [
+                    {
+                      "state": "CLOSED"
+                    }
+                  ]
+                }
+              },
+              {
+                "number": 22,
+                "title": "Rulle ut fase 1",
+                "url": "https://github.com/navikt/sas-issues/issues/22",
+                "state": "CLOSED",
+                "closedAt": "2026-11-04T19:05:56Z",
+                "repository": {
+                  "nameWithOwner": "navikt/sas-issues"
+                },
+                "assignees": {
+                  "nodes": []
+                },
+                "labels": {
+                  "nodes": [
+                    {
+                      "name": "spec-ticket"
+                    },
+                    {
+                      "name": "epic:avklare-rettighetskategori"
+                    }
+                  ]
+                },
+                "blockedBy": {
+                  "nodes": []
+                }
+              }
+            ]
+          }
+        },
+        {
+          "number": 904,
+          "title": "Endepunkt i spleis-api",
+          "url": "https://github.com/navikt/sas-issues/issues/904",
+          "state": "OPEN",
+          "closedAt": null,
+          "body": "**Fase:** 2\n\n**Repo:** `spleis`\n\n**Hva skal lages:** Oppdiktet ticket for mock.\n",
+          "repository": {
+            "nameWithOwner": "navikt/sas-issues"
+          },
+          "assignees": {
+            "nodes": []
+          },
+          "labels": {
+            "nodes": [
+              {
+                "name": "spec-ticket"
+              },
+              {
+                "name": "epic:eksempel"
+              }
+            ]
+          },
+          "blockedBy": {
+            "nodes": [
+              {
+                "number": 901,
+                "title": "Skjelett for sp-eksempel",
+                "url": "https://github.com/navikt/sas-issues/issues/901",
+                "state": "CLOSED",
+                "closedAt": "2026-10-02T09:12:00Z",
+                "repository": {
+                  "nameWithOwner": "navikt/sas-issues"
+                },
+                "assignees": {
+                  "nodes": []
+                },
+                "labels": {
+                  "nodes": [
+                    {
+                      "name": "spec-ticket"
+                    },
+                    {
+                      "name": "epic:eksempel"
+                    }
+                  ]
+                },
+                "blockedBy": {
+                  "nodes": []
+                }
+              }
+            ]
+          }
+        },
+        {
+          "number": 905,
+          "title": "Backfill av historikken",
+          "url": "https://github.com/navikt/sas-issues/issues/905",
+          "state": "OPEN",
+          "closedAt": null,
+          "body": "**Fase:** 2\n\n**Repo:** `sp-eksempel`\n\n**Hva skal lages:** Oppdiktet ticket for mock.\n",
+          "repository": {
+            "nameWithOwner": "navikt/sas-issues"
+          },
+          "assignees": {
+            "nodes": []
+          },
+          "labels": {
+            "nodes": [
+              {
+                "name": "spec-ticket"
+              },
+              {
+                "name": "epic:eksempel"
+              }
+            ]
+          },
+          "blockedBy": {
+            "nodes": [
+              {
+                "number": 902,
+                "title": "Behov og løsning for eksempelet",
+                "url": "https://github.com/navikt/sas-issues/issues/902",
+                "state": "CLOSED",
+                "closedAt": "2026-10-15T13:40:00Z",
+                "repository": {
+                  "nameWithOwner": "navikt/sas-issues"
+                },
+                "assignees": {
+                  "nodes": []
+                },
+                "labels": {
+                  "nodes": [
+                    {
+                      "name": "spec-ticket"
+                    },
+                    {
+                      "name": "epic:eksempel"
+                    }
+                  ]
+                },
+                "blockedBy": {
+                  "nodes": [
+                    {
+                      "state": "CLOSED"
+                    }
+                  ]
+                }
+              },
+              {
+                "number": 904,
+                "title": "Endepunkt i spleis-api",
+                "url": "https://github.com/navikt/sas-issues/issues/904",
+                "state": "OPEN",
+                "closedAt": null,
+                "repository": {
+                  "nameWithOwner": "navikt/sas-issues"
+                },
+                "assignees": {
+                  "nodes": []
+                },
+                "labels": {
+                  "nodes": [
+                    {
+                      "name": "spec-ticket"
+                    },
+                    {
+                      "name": "epic:eksempel"
+                    }
+                  ]
+                },
+                "blockedBy": {
+                  "nodes": [
+                    {
+                      "state": "CLOSED"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "number": 906,
+          "title": "Rulle ut og skru på togglen",
+          "url": "https://github.com/navikt/sas-issues/issues/906",
+          "state": "OPEN",
+          "closedAt": null,
+          "body": "**Fase:** 3\n\n**Repo:** `spleis`, `sp-eksempel`\n\n**Hva skal lages:** Oppdiktet ticket for mock.\n",
+          "repository": {
+            "nameWithOwner": "navikt/sas-issues"
+          },
+          "assignees": {
+            "nodes": []
+          },
+          "labels": {
+            "nodes": [
+              {
+                "name": "spec-ticket"
+              },
+              {
+                "name": "epic:eksempel"
+              }
+            ]
+          },
+          "blockedBy": {
+            "nodes": [
+              {
+                "number": 903,
+                "title": "Ny tilstand i Spleis bak toggle",
+                "url": "https://github.com/navikt/sas-issues/issues/903",
+                "state": "OPEN",
+                "closedAt": null,
+                "repository": {
+                  "nameWithOwner": "navikt/sas-issues"
+                },
+                "assignees": {
+                  "nodes": [
+                    {
+                      "login": "kari-nordmann",
+                      "avatarUrl": null
+                    }
+                  ]
+                },
+                "labels": {
+                  "nodes": [
+                    {
+                      "name": "spec-ticket"
+                    },
+                    {
+                      "name": "epic:eksempel"
+                    }
+                  ]
+                },
+                "blockedBy": {
+                  "nodes": [
+                    {
+                      "state": "CLOSED"
+                    }
+                  ]
+                }
+              },
+              {
+                "number": 905,
+                "title": "Backfill av historikken",
+                "url": "https://github.com/navikt/sas-issues/issues/905",
+                "state": "OPEN",
+                "closedAt": null,
+                "repository": {
+                  "nameWithOwner": "navikt/sas-issues"
+                },
+                "assignees": {
+                  "nodes": []
+                },
+                "labels": {
+                  "nodes": [
+                    {
+                      "name": "spec-ticket"
+                    },
+                    {
+                      "name": "epic:eksempel"
+                    }
+                  ]
+                },
+                "blockedBy": {
+                  "nodes": [
+                    {
+                      "state": "CLOSED"
+                    },
+                    {
+                      "state": "OPEN"
+                    }
+                  ]
+                }
+              },
+              {
+                "number": 38,
+                "title": "Fjerne togglen for graderte andre ytelser i Spleis",
+                "url": "https://github.com/navikt/sas-issues/issues/38",
+                "state": "OPEN",
+                "closedAt": null,
+                "repository": {
+                  "nameWithOwner": "navikt/sas-issues"
+                },
+                "assignees": {
+                  "nodes": []
+                },
+                "labels": {
+                  "nodes": [
+                    {
+                      "name": "spec-ticket"
+                    },
+                    {
+                      "name": "epic:graderte-andre-ytelser"
+                    }
+                  ]
+                },
+                "blockedBy": {
+                  "nodes": [
+                    {
+                      "state": "OPEN"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "number": 907,
+          "title": "Rydde i gammel kode",
+          "url": "https://github.com/navikt/sas-issues/issues/907",
+          "state": "OPEN",
+          "closedAt": null,
+          "body": "**Repo:** `spleis`\n\n**Hva skal lages:** Oppdiktet ticket for mock.\n",
+          "repository": {
+            "nameWithOwner": "navikt/sas-issues"
+          },
+          "assignees": {
+            "nodes": []
+          },
+          "labels": {
+            "nodes": [
+              {
+                "name": "spec-ticket"
+              },
+              {
+                "name": "epic:eksempel"
+              }
+            ]
+          },
+          "blockedBy": {
+            "nodes": []
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,73 @@
+name: deploy
+
+on:
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: '0 4 * * 3'
+      timezone: 'Europe/Oslo'
+  workflow_dispatch:
+env:
+  APP: sp-sas-ticket-graf
+  TEAM: tbd
+
+jobs:
+  test-and-lint:
+    permissions:
+      contents: 'read'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Installer deps
+        uses: ./.github/actions/setup-pnpm
+      - run: pnpm run lint
+      - run: pnpm run tsc
+      - run: pnpm run test
+
+  build:
+    if: github.ref == 'refs/heads/main'
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Installer deps
+        uses: ./.github/actions/setup-pnpm
+      - run: pnpm run build
+      - uses: nais/docker-build-push@dd7421d5068057a020ca46ead966c26190c516b1 # v0
+        name: Bygg og push image
+        id: docker-build-push
+        with:
+          team: ${{ env.TEAM }}
+          image_suffix: prod
+    outputs:
+      image: ${{ steps.docker-build-push.outputs.image }}
+
+  deploy-prod:
+    name: Deploy to prod
+    needs: [build, test-and-lint]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+    if: github.ref == 'refs/heads/main'
+    environment:
+      name: production
+      url: https://sas-epics.ansatt.nav.no
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: nais/deploy/actions/deploy@6a9dcd6df697ec2d38edc78cadb0b9acd1232f50 # v3
+        env:
+          CLUSTER: prod-gcp
+          RESOURCE: deploy/prod.yml
+          VAR: 'image=${{ needs.build.outputs.image }},team=${{env.TEAM}},app=${{env.APP}}'

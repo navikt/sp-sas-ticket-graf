@@ -1,0 +1,28 @@
+version: 2
+multi-ecosystem-groups:
+  dependencies:
+    schedule:
+      interval: "daily"
+    commit-message:
+      prefix: "⬆️ "
+updates:
+  - package-ecosystem: "github-actions"
+    directories:
+      - "/"
+      - "/.github/actions/*"
+    multi-ecosystem-group: "dependencies"
+    patterns: ["*"]
+    cooldown:
+      default-days: 7
+
+  - package-ecosystem: "npm"
+    directory: "/"
+    multi-ecosystem-group: "dependencies"
+    patterns: ["*"]
+    cooldown:
+      default-days: 7
+    ignore:
+      # @types/node må følge Node-versjonen i Dockerfile og CI, så major-versjoner holdes tilbake
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]
+
