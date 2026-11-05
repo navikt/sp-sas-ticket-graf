@@ -42,7 +42,7 @@ Konvensjonene for issuene står i [`docs/agents/issue-tracker.md`](https://githu
 
 ## Drift
 
-Appen kjører bare i prod-gcp, i namespacet `tbd`, på <https://sas-epics.ansatt.nav.no>. Ingressen er bare tilgjengelig for ansatte, og Azure-sidecaren krever innlogging. Bare medlemmer av gruppene `tbd` og `nais-team-tbd` slipper inn.
+Appen kjører bare i prod-gcp, i namespacet `tbd`, på <https://sas-epics.ansatt.nav.no>. Appen har ingen egen innlogging. Den er bare tilgjengelig gjennom ansatt-ingressen, som bare kan nås fra Navs nett.
 
 `deploy.yml` tester, bygger imaget og deployer `deploy/prod.yml` ved push til `main`. Den kjører også hver onsdag, slik at imaget får nye sikkerhetsoppdateringer. Pull requests bygges og testes i `pull-requests.yml`. Dependabot oppdaterer avhengighetene, og `standard-dependabot-auto-merge.yml` merger alt unntatt major-oppdateringer av npm-pakker.
 
