@@ -15,7 +15,7 @@ import eksempel from "../../fixtures/epic-eksempel.json";
 import graderteAndreYtelser from "../../fixtures/epic-graderte-andre-ytelser.json";
 
 const GITHUB_GRAPHQL_URL = "https://api.github.com/graphql";
-const CACHE_TTL_MS = 2 * 60 * 1000;
+const CACHE_TTL_MS = 10 * 60 * 1000;
 
 // Lagt på globalThis så sidene og server-actionen deler samme cache selv om Next laster modulen flere ganger.
 const globalForCache = globalThis as typeof globalThis & { gitHubCache?: TtlCache };

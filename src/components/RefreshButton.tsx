@@ -11,7 +11,7 @@ export function RefreshButton() {
       type="button"
       onClick={() => startTransition(() => refreshFromGitHub())}
       disabled={pending}
-      title="Svarene fra GitHub mellomlagres i 2 minutter. Klikk for å hente på nytt nå."
+      title="Svarene fra GitHub mellomlagres i 10 minutter. Klikk for å hente på nytt nå."
       className="fixed bottom-3 right-4 z-30 inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs text-slate-400 transition hover:bg-white hover:text-slate-700 hover:shadow-sm disabled:cursor-wait"
     >
       <svg

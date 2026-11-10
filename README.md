@@ -1,6 +1,6 @@
 # sp-sas-ticket-graf
 
-Viser avhengighetene mellom ticketene i en epic i [`navikt/sas-issues`](https://github.com/navikt/sas-issues/issues) som en graf. Appen henter issuene fra GitHub på serveren og mellomlagrer svarene i minnet i hver pod i 2 minutter. Knappen «Hent på nytt» nede til høyre tømmer mellomlageret og henter alt på nytt. Hver ticket er farget etter status og lenker til issuet på GitHub.
+Viser avhengighetene mellom ticketene i en epic i [`navikt/sas-issues`](https://github.com/navikt/sas-issues/issues) som en graf. Appen henter issuene fra GitHub på serveren og mellomlagrer svarene i minnet i hver pod i 10 minutter. Knappen «Hent på nytt» nede til høyre tømmer mellomlageret og henter alt på nytt. Hver ticket er farget etter status og lenker til issuet på GitHub.
 
 ## Kjøre lokalt
 
