@@ -4,7 +4,7 @@ import { RefreshButton } from "@/components/RefreshButton";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "sas-epics",
+  title: "Sas Epics",
   description: "Avhengigheter mellom ticketene i navikt/sas-issues",
 };
 
@@ -23,9 +23,27 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
                   <circle cx="19" cy="12" r="2.5" fill="currentColor" stroke="none" />
                 </svg>
               </span>
-              sas-epics
+              Sas Epics
             </Link>
-            <span className="text-sm text-slate-400">navikt/sas-issues</span>
+            <a
+              href="https://github.com/navikt/sas-issues/issues"
+              target="_blank"
+              rel="noreferrer"
+              className="text-sm text-slate-500 hover:text-blue-700 hover:underline"
+            >
+              navikt/sas-issues
+            </a>
+            <span aria-hidden className="text-sm text-slate-300">
+              ·
+            </span>
+            <a
+              href="https://github.com/orgs/navikt/projects/248"
+              target="_blank"
+              rel="noreferrer"
+              className="text-sm text-slate-500 hover:text-blue-700 hover:underline"
+            >
+              GitHub-prosjekt
+            </a>
           </div>
         </header>
         {children}

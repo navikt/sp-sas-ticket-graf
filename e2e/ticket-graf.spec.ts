@@ -125,7 +125,7 @@ test("viser en egen side for en ukjent epic", async ({ page }) => {
 
 test("knappen nede til høyre henter dataene på nytt", async ({ page }) => {
   await page.goto("/eksempel");
-  await expect(page).toHaveTitle("sas-epics");
+  await expect(page).toHaveTitle("Sas Epics");
 
   const refresh = page.getByRole("button", { name: "Hent på nytt" });
   await refresh.click();
