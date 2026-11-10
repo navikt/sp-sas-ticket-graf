@@ -22,12 +22,11 @@ export interface Issue {
   body: string;
   assignees: Assignee[];
   labels: string[];
+  openBlockerCount: number;
   blockedBy: Blocker[];
 }
 
-export interface Blocker extends Omit<Issue, "body" | "blockedBy"> {
-  openBlockerCount: number;
-}
+export type Blocker = Omit<Issue, "body" | "blockedBy">;
 
 export interface Epic {
   slug: string;
@@ -80,13 +79,19 @@ export function epicOf(labels: string[]): string | null {
 
 export function deriveStatus(issue: {
   state: Issue["state"];
-  assignees: Assignee[];
+  assigneeCount: number;
   openBlockerCount: number;
 }): Status {
   if (issue.state === "CLOSED") return "ferdig";
-  if (issue.assignees.length > 0) return "pågår";
+  if (issue.assigneeCount > 0) return "pågår";
   if (issue.openBlockerCount > 0) return "blokkert";
   return "klar";
+}
+
+export function countStatuses(statuses: Status[]): Record<Status, number> {
+  const counts = Object.fromEntries(STATUSES.map((it) => [it, 0])) as Record<Status, number>;
+  for (const status of statuses) counts[status]++;
+  return counts;
 }
 
 export function parseFase(body: string): string | null {
@@ -112,10 +117,7 @@ export function buildEpicGraph(epic: string, epicIssues: Issue[]): EpicGraph {
       number: issue.number,
       title: issue.title,
       url: issue.url,
-      status: deriveStatus({
-        ...issue,
-        openBlockerCount: issue.blockedBy.filter((it) => it.state === "OPEN").length,
-      }),
+      status: deriveStatus({ ...issue, assigneeCount: issue.assignees.length }),
       closedAt: issue.closedAt,
       fase: parseFase(issue.body),
       repos: parseRepos(issue.body),
@@ -136,7 +138,7 @@ export function buildEpicGraph(epic: string, epicIssues: Issue[]): EpicGraph {
           number: blocker.number,
           title: blocker.title,
           url: blocker.url,
-          status: deriveStatus(blocker),
+          status: deriveStatus({ ...blocker, assigneeCount: blocker.assignees.length }),
           closedAt: blocker.closedAt,
           fase: null,
           repos: [],
@@ -152,8 +154,7 @@ export function buildEpicGraph(epic: string, epicIssues: Issue[]): EpicGraph {
   const sorted = [...tickets.values()].sort(
     (a, b) => Number(a.external) - Number(b.external) || a.number - b.number,
   );
-  const counts = Object.fromEntries(STATUSES.map((it) => [it, 0])) as Record<Status, number>;
-  for (const ticket of sorted) if (!ticket.external) counts[ticket.status]++;
+  const counts = countStatuses(sorted.filter((it) => !it.external).map((it) => it.status));
 
   const phases = derivePhases(sorted, dependencies);
   return { epic, spec, tickets: sorted, dependencies, phases, counts };

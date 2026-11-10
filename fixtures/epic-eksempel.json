@@ -29,6 +29,10 @@
               }
             ]
           },
+          "issueDependenciesSummary": {
+            "blockedBy": 0,
+            "totalBlockedBy": 0
+          },
           "blockedBy": {
             "nodes": []
           }
@@ -55,6 +59,10 @@
                 "name": "epic:eksempel"
               }
             ]
+          },
+          "issueDependenciesSummary": {
+            "blockedBy": 0,
+            "totalBlockedBy": 0
           },
           "blockedBy": {
             "nodes": []
@@ -83,6 +91,10 @@
               }
             ]
           },
+          "issueDependenciesSummary": {
+            "blockedBy": 0,
+            "totalBlockedBy": 1
+          },
           "blockedBy": {
             "nodes": [
               {
@@ -107,8 +119,8 @@
                     }
                   ]
                 },
-                "blockedBy": {
-                  "nodes": []
+                "issueDependenciesSummary": {
+                  "blockedBy": 0
                 }
               }
             ]
@@ -142,6 +154,10 @@
               }
             ]
           },
+          "issueDependenciesSummary": {
+            "blockedBy": 0,
+            "totalBlockedBy": 2
+          },
           "blockedBy": {
             "nodes": [
               {
@@ -166,12 +182,8 @@
                     }
                   ]
                 },
-                "blockedBy": {
-                  "nodes": [
-                    {
-                      "state": "CLOSED"
-                    }
-                  ]
+                "issueDependenciesSummary": {
+                  "blockedBy": 0
                 }
               },
               {
@@ -196,8 +208,8 @@
                     }
                   ]
                 },
-                "blockedBy": {
-                  "nodes": []
+                "issueDependenciesSummary": {
+                  "blockedBy": 0
                 }
               }
             ]
@@ -226,6 +238,10 @@
               }
             ]
           },
+          "issueDependenciesSummary": {
+            "blockedBy": 0,
+            "totalBlockedBy": 1
+          },
           "blockedBy": {
             "nodes": [
               {
@@ -250,8 +266,8 @@
                     }
                   ]
                 },
-                "blockedBy": {
-                  "nodes": []
+                "issueDependenciesSummary": {
+                  "blockedBy": 0
                 }
               }
             ]
@@ -280,6 +296,10 @@
               }
             ]
           },
+          "issueDependenciesSummary": {
+            "blockedBy": 1,
+            "totalBlockedBy": 2
+          },
           "blockedBy": {
             "nodes": [
               {
@@ -304,12 +324,8 @@
                     }
                   ]
                 },
-                "blockedBy": {
-                  "nodes": [
-                    {
-                      "state": "CLOSED"
-                    }
-                  ]
+                "issueDependenciesSummary": {
+                  "blockedBy": 0
                 }
               },
               {
@@ -334,12 +350,8 @@
                     }
                   ]
                 },
-                "blockedBy": {
-                  "nodes": [
-                    {
-                      "state": "CLOSED"
-                    }
-                  ]
+                "issueDependenciesSummary": {
+                  "blockedBy": 0
                 }
               }
             ]
@@ -367,6 +379,10 @@
                 "name": "epic:eksempel"
               }
             ]
+          },
+          "issueDependenciesSummary": {
+            "blockedBy": 3,
+            "totalBlockedBy": 3
           },
           "blockedBy": {
             "nodes": [
@@ -397,12 +413,8 @@
                     }
                   ]
                 },
-                "blockedBy": {
-                  "nodes": [
-                    {
-                      "state": "CLOSED"
-                    }
-                  ]
+                "issueDependenciesSummary": {
+                  "blockedBy": 0
                 }
               },
               {
@@ -427,15 +439,8 @@
                     }
                   ]
                 },
-                "blockedBy": {
-                  "nodes": [
-                    {
-                      "state": "CLOSED"
-                    },
-                    {
-                      "state": "OPEN"
-                    }
-                  ]
+                "issueDependenciesSummary": {
+                  "blockedBy": 1
                 }
               },
               {
@@ -460,12 +465,8 @@
                     }
                   ]
                 },
-                "blockedBy": {
-                  "nodes": [
-                    {
-                      "state": "OPEN"
-                    }
-                  ]
+                "issueDependenciesSummary": {
+                  "blockedBy": 1
                 }
               }
             ]
@@ -493,6 +494,10 @@
                 "name": "epic:eksempel"
               }
             ]
+          },
+          "issueDependenciesSummary": {
+            "blockedBy": 0,
+            "totalBlockedBy": 0
           },
           "blockedBy": {
             "nodes": []

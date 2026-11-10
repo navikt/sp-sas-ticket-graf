@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { fetchEpicIssues, fetchEpics, type Transport } from "./github";
+import { fetchEpicCounts, fetchEpicIssues, fetchEpics, type Transport } from "./github";
 import { layoutGraph, TICKET_HEIGHT, TICKET_WIDTH } from "./layout";
 import { buildEpicGraph, deriveStatus, parseFase, parseRepos, type Issue } from "./tickets";
 import epics from "../../fixtures/epics.json";
@@ -13,15 +13,14 @@ async function eksempelGraph() {
 }
 
 describe("deriveStatus", () => {
-  const open = { state: "OPEN" as const, assignees: [], openBlockerCount: 0 };
-  const someone = [{ login: "kari", avatarUrl: null }];
+  const open = { state: "OPEN" as const, assigneeCount: 0, openBlockerCount: 0 };
 
   it("er ferdig når issuet er lukket, uansett blokkeringer", () => {
     expect(deriveStatus({ ...open, state: "CLOSED", openBlockerCount: 2 })).toBe("ferdig");
   });
 
   it("er pågår når issuet er tildelt, også om det har åpne blokkeringer", () => {
-    expect(deriveStatus({ ...open, assignees: someone, openBlockerCount: 1 })).toBe("pågår");
+    expect(deriveStatus({ ...open, assigneeCount: 1, openBlockerCount: 1 })).toBe("pågår");
   });
 
   it("er blokkert når issuet har åpne blokkeringer og ingen er tildelt", () => {
@@ -30,6 +29,35 @@ describe("deriveStatus", () => {
 
   it("er klar når issuet er åpent, ikke tildelt og uten åpne blokkeringer", () => {
     expect(deriveStatus(open)).toBe("klar");
+  });
+});
+
+describe("fetchEpicCounts", () => {
+  it("teller statusene uten specen", async () => {
+    const node = (state: "OPEN" | "CLOSED", assignees: number, openBlockers: number, labels: string[] = []) => ({
+      state,
+      assignees: { totalCount: assignees },
+      labels: { nodes: labels.map((name) => ({ name })) },
+      issueDependenciesSummary: { blockedBy: openBlockers },
+    });
+    const transport: Transport = async <T>() =>
+      ({
+        repository: {
+          issues: {
+            pageInfo: { hasNextPage: false, endCursor: null },
+            nodes: [
+              node("OPEN", 0, 0, ["spec-issue"]),
+              node("CLOSED", 1, 1),
+              node("OPEN", 1, 1),
+              node("OPEN", 0, 2),
+              node("OPEN", 0, 0),
+              node("OPEN", 0, 0),
+            ],
+          },
+        },
+      }) as T;
+
+    expect(await fetchEpicCounts(transport, "x")).toEqual({ ferdig: 1, pågår: 1, blokkert: 1, klar: 2 });
   });
 });
 

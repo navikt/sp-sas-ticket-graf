@@ -46,6 +46,8 @@ Appen kjører bare i prod-gcp, i namespacet `tbd`, på <https://sas-epics.ansatt
 
 `deploy.yml` tester, bygger imaget og deployer `deploy/prod.yml` ved push til `main`. Den kjører også hver onsdag, slik at imaget får nye sikkerhetsoppdateringer. Pull requests bygges og testes i `pull-requests.yml`. Dependabot oppdaterer avhengighetene, og `standard-dependabot-auto-merge.yml` merger alt unntatt major-oppdateringer av npm-pakker.
 
+GitHub gir tokenet 5 000 GraphQL-poeng i timen, og kvoten deles med alle andre tokens til samme bruker. Forsiden henter bare det den trenger for å telle statusene, og grafen henter høyst 20 blokkeringer per ticket (`MAX_BLOCKERS` i `src/lib/github.ts`). Har en ticket flere, logger appen en advarsel.
+
 Appen leser `GITHUB_TOKEN` fra Nais-secreten `sp-sas-ticket-graf`. Tokenet trenger bare lesetilgang til issuene i `navikt/sas-issues`. Opprett secreten for teamet `tbd` i prod-gcp i [Nais Console](https://console.nav.cloud.nais.io) før første deploy.
 
 ### Fornye tokenet

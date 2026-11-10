@@ -29,6 +29,10 @@
               }
             ]
           },
+          "issueDependenciesSummary": {
+            "blockedBy": 0,
+            "totalBlockedBy": 0
+          },
           "blockedBy": {
             "nodes": []
           }
@@ -56,6 +60,10 @@
             ]
           },
           "body": "**Spec:** [Graderte andre ytelser fra saksbehandler](https://github.com/navikt/helse-sas-meta/blob/main/docs/specs/graderte-andre-ytelser.md)\n\n**Repo:** `sp-andre-ytelser`\n\n**Hva skal lages:** Speil sender `sykdomsgradFørFordeling` på hver dag når saksbehandler fordeler dagen. sp-andre-ytelser avviser fordelinger som bryter reglene i specen, med de nye feilkodene, og lagrer `sykdomsgradFørFordeling` på dagene i hendelsen. `GET` viser feltet på dagene og i historikken. En dag uten ytelser fjerner de graderte andre ytelsene fra dagen.\n\n**Blokkeres av:** Ingen (kan starte med en gang)\n\n## Akseptansekriterier\n\n- [x] `POST /api/personer/{personPseudoId}/graderte-andre-ytelser` krever `sykdomsgradFørFordeling` på hver dag.\n- [x] Reglene 1–6 i specen gjelder for hver dag. Brudd gir 400 med `GRAD_UTENFOR_GRENSER`, `SUM_ER_IKKE_100`, `ARBEIDSGRAD_OKER` eller `YTELSER_MANGLER_TREKK`. `NEGATIV_GRAD` og `TOTAL_GRAD_OVER_100` er fjernet.\n- [x] Validering skjer før versjonssjekken (409 `UTDATERT_TILSTAND`), som før.\n- [x] `sykdomsgradFørFordeling` og `fraSykdomsgradFørFordeling` lagres på dagene i hendelsen og vises i `GET`, både på dagene og i hendelsene.\n- [x] Eksisterende hendelser uten feltet er slettet med en migrering, etter at det er sjekket at prod ikke har ekte data. Prod har ingen data, fordi Speil ikke kan sende fordelinger i prod ennå.\n- [x] OpenAPI-specen er oppdatert, og `OpenApiSpecTest` er grønn.\n- [x] Tester: én test per regel med grensene rundt den i `GraderteAndreYtelserValidatorTest`, og lagring, visning og feilkoder i `GraderteAndreYtelserPostApiTest` og `GraderteAndreYtelserApiTest`.\n\n## Merknader fra implementasjonen\n\n- **Rullerende deploy:** Flyway kjører V005 når den første nye poden starter. Gamle pods kan fortsatt lagre hendelser uten `sykdomsgradFørFordeling`, og da kan ikke de nye podene lese strømmen til den personen. Skaler ned eller deploy med `Recreate` når V005 går ut, eller sørg for at ingen fordeler dager under deployen.\n- **Speil:** API-et krever nå `sykdomsgradFørFordeling`. En Speil-versjon som ikke sender feltet, får 400. Speil må derfor sende feltet før eller samtidig med at denne endringen går ut. [09: Speil lagrer fordelingene i sp-andre-ytelser med sykdomsgraden før fordeling](https://github.com/navikt/sas-issues/issues/40) dekker dette.\n",
+          "issueDependenciesSummary": {
+            "blockedBy": 0,
+            "totalBlockedBy": 0
+          },
           "blockedBy": {
             "nodes": []
           }
@@ -88,6 +96,10 @@
             ]
           },
           "body": "**Spec:** [Graderte andre ytelser fra saksbehandler](https://github.com/navikt/helse-sas-meta/blob/main/docs/specs/graderte-andre-ytelser.md)\n\n**Repo:** `sp-andre-ytelser`\n\n**Hva skal lages:** Løsningen på `GraderteAndreYtelserForBeregning` har `versjon` per yrkesaktivitet og `trekkFraSykdomsgrad` og `sykdomsgradFørFordeling` per dag, slik specen beskriver. Spleis kan da spore hvilke fordelinger en beregning bygde på, og bruke trekket uten å kjenne reglene for fordelingen.\n\n**Blokkeres av:** [01: sp-andre-ytelser lagrer sykdomsgraden før fordeling og håndhever reglene](https://github.com/navikt/sas-issues/issues/32)\n\n## Akseptansekriterier\n\n- [x] Hvert element i løsningen har `versjon`, som er versjonen til den siste hendelsen for yrkesaktiviteten.\n- [x] Hver dag har `trekkFraSykdomsgrad` (`sykdomsgradFørFordeling − sykdomsgrad`) og `sykdomsgradFørFordeling`.\n- [x] Dagene er avgrenset til `fom`–`tom` og sortert på dato. Yrkesaktiviteter uten dager i perioden er ikke med.\n- [x] En dag der ytelsene er fjernet, har `trekkFraSykdomsgrad` 0.\n- [x] Tester i `GraderteAndreYtelserBehovRiverTest` dekker versjon, trekk fra sykdom, ytelser tatt fra arbeid (trekk 0), flere yrkesaktiviteter og avgrensning til perioden.\n- [ ] Rullet ut i dev og prod.\n",
+          "issueDependenciesSummary": {
+            "blockedBy": 0,
+            "totalBlockedBy": 1
+          },
           "blockedBy": {
             "nodes": [
               {
@@ -112,8 +124,8 @@
                     }
                   ]
                 },
-                "blockedBy": {
-                  "nodes": []
+                "issueDependenciesSummary": {
+                  "blockedBy": 0
                 }
               }
             ]
@@ -142,6 +154,10 @@
             ]
           },
           "body": "**Spec:** [Graderte andre ytelser fra saksbehandler](https://github.com/navikt/helse-sas-meta/blob/main/docs/specs/graderte-andre-ytelser.md)\n\n**Repo:** `spleis`\n\n**Hva skal lages:** Når togglen er på, leser Spleis løsningen på `GraderteAndreYtelserForBeregning` i formatet fra specen, for alle yrkesaktivitetstypene, også `ARBEIDSLEDIG`. Trekket blir `andreYtelserGrad` for dagen og yrkesaktiviteten, og den justerte sykdomsgraden gir utbetalingen. Det gamle formatet er fjernet. Spleis revurderer allerede ved `graderte_andre_ytelser_endret`, så når ticket #33 er ute, gir saksbehandlers fordeling en ny beregning i dev.\n\n**Blokkeres av:** Ingen (kan starte med en gang, med testløsninger)\n\n## Akseptansekriterier\n\n- [x] Mottaket av `Ytelser` leser `yrkesaktivitetstype`, `organisasjonsnummer`, `versjon` og `dager` med `dato`, `trekkFraSykdomsgrad` og `sykdomsgradFørFordeling`. Feltene `yrkesaktivitet`, `graderteAndreYtelserType` og `graderteAndreYtelserPerioder` leses ikke lenger.\n- [x] `ARBEIDSTAKER` med organisasjonsnummer, `FRILANS`, `SELVSTENDIG` og `ARBEIDSLEDIG` blir riktig yrkesaktivitet.\n- [x] Tidslinjen per yrkesaktivitet har trekket og sykdomsgraden før fordeling per dag, og trekket blir `andreYtelserGrad` i `Økonomi`.\n- [x] Et trekk som er større enn sykdomsgraden, gir justert sykdomsgrad 0.\n- [x] Behovet sendes fortsatt bare når togglen er på, med beregningsperioden som `fom` og `tom`.\n- [x] `BehovkontraktTest`, `YtelserRiverTest` og `YtelserRiverMappingTest` er oppdatert. `YtelserRiverTest` trengte ingen endring: fixturene har ingen løsning på behovet, og valideringen med togglen på testes i `YtelserRiverMappingTest`.\n- [x] E2e-tester i `GraderteAndreYtelserTest` dekker trekk fra sykdom, trekk som er større enn sykdomsgraden, to arbeidsgivere der bare én har trekk og 20 %-regelen mot totalgraden, revurdering etter `graderte_andre_ytelser_endret` og togglen av og på. Togglen finnes bare i mediators, så av og på testes i `BehovkontraktTest`.\n",
+          "issueDependenciesSummary": {
+            "blockedBy": 0,
+            "totalBlockedBy": 0
+          },
           "blockedBy": {
             "nodes": []
           }
@@ -169,6 +185,10 @@
             ]
           },
           "body": "**Spec:** [Graderte andre ytelser fra saksbehandler](https://github.com/navikt/helse-sas-meta/blob/main/docs/specs/graderte-andre-ytelser.md)\n\n**Repo:** `spleis`\n\n**Hva skal lages:** Endringen i behandlingen husker hvilken versjon av graderte andre ytelser beregningen bygde på, for yrkesaktiviteten som vedtaksperioden tilhører. Det går da an å se i ettertid hvilke fordelinger et vedtak bygde på.\n\n**Blokkeres av:** [03: Spleis leser løsningen fra sp-andre-ytelser og bruker trekket](https://github.com/navikt/sas-issues/issues/34)\n\n## Akseptansekriterier\n\n- [x] `Endring.graderteAndreYtelserId` settes til `versjon` for behandlingens egen yrkesaktivitet. Feltet er tomt når løsningen ikke har noe element for yrkesaktiviteten.\n- [x] Versjonene til de andre yrkesaktivitetene lagres ikke på endringen.\n- [x] Feltet lagres og leses med serde og er med i DTO-ene. Endringer uten feltet leses som tomme.\n- [x] En ny endring etter revurdering får den nye versjonen, og den forrige endringen beholder sin.\n- [x] En e2e-test i `GraderteAndreYtelserTest` med to arbeidsgivere sjekker at hver endring har versjonen for sin egen arbeidsgiver, før og etter en ny fordeling. En serde-test dekker gamle data.\n\n## Merknader\n\n- Versjonen følger beregningen. Den settes når endringen får en ny beregning, og nullstilles når beregningen fjernes eller perioden annulleres.\n",
+          "issueDependenciesSummary": {
+            "blockedBy": 0,
+            "totalBlockedBy": 1
+          },
           "blockedBy": {
             "nodes": [
               {
@@ -193,8 +213,8 @@
                     }
                   ]
                 },
-                "blockedBy": {
-                  "nodes": []
+                "issueDependenciesSummary": {
+                  "blockedBy": 0
                 }
               }
             ]
@@ -223,6 +243,10 @@
             ]
           },
           "body": "**Spec:** [Graderte andre ytelser fra saksbehandler](https://github.com/navikt/helse-sas-meta/blob/main/docs/specs/graderte-andre-ytelser.md)\n\n**Repo:** `spleis`\n\n**Hva skal lages:** `andreYtelserGrad` i `Økonomi` får navnet `trekkFraSykdomsgrad`, og feltet lagres på hver utbetalingsdag, slik at et vedtak med trekk kan leses og beregnes på nytt uten å spørre sp-andre-ytelser.\n\n**Blokkeres av:** Ingen (kan starte med en gang)\n\n## Akseptansekriterier\n\n- [x] `Økonomi` bruker `trekkFraSykdomsgrad` i stedet for `andreYtelserGrad`.\n- [x] `ØkonomiUtDto` og `ØkonomiInnDto` har `trekkFraSykdomsgrad`, og serde lagrer feltet per utbetalingsdag.\n- [x] Utbetalingsdager uten feltet leses som 0.\n- [x] En person med trekk som lagres og leses inn igjen, får samme utbetalingstidslinje.\n- [x] En serde-test dekker både nye og gamle data.\n",
+          "issueDependenciesSummary": {
+            "blockedBy": 0,
+            "totalBlockedBy": 0
+          },
           "blockedBy": {
             "nodes": []
           }
@@ -250,6 +274,10 @@
             ]
           },
           "body": "**Spec:** [Graderte andre ytelser fra saksbehandler](https://github.com/navikt/helse-sas-meta/blob/main/docs/specs/graderte-andre-ytelser.md)\n\n**Repo:** `spleis`\n\n**Hva skal lages:** Når sykdomsgraden saksbehandler så ved fordelingen ikke er lik Spleis' sykdomsgrad for dagen, får vedtaksperioden varselet «Sykdomsgraden er endret etter fordeling av dagen. Fordel dagen på nytt.» Saksbehandler må da fordele dagen på nytt før vedtaket fattes.\n\n**Blokkeres av:** [03: Spleis leser løsningen fra sp-andre-ytelser og bruker trekket](https://github.com/navikt/sas-issues/issues/34)\n\n## Akseptansekriterier\n\n- [ ] En ny varselkode i serien `RV_AY` har teksten over.\n- [ ] Varselet lages når minst én dag i perioden for behandlingens yrkesaktivitet har en `sykdomsgradFørFordeling` som ikke er lik Spleis' sykdomsgrad. En dag som ikke er sykedag i Spleis, har sykdomsgrad 0 i sammenligningen.\n- [ ] Spleis lager ikke varselet når gradene er like, eller når perioden ikke har graderte andre ytelser.\n- [ ] Varselet stopper automatisk behandling.\n- [ ] Varselet har en definisjon med tittel og handling, slik at Spesialist får `varselkode_ny_definisjon` og Speil viser varselet med tekst, som for de andre `RV_AY`-varslene.\n- [ ] E2e-tester i `GraderteAndreYtelserTest` dekker endret sykdomsgrad fra en korrigerende søknad, en overstyrt dag som ikke lenger er sykedag, og like grader uten varsel.\n",
+          "issueDependenciesSummary": {
+            "blockedBy": 0,
+            "totalBlockedBy": 1
+          },
           "blockedBy": {
             "nodes": [
               {
@@ -274,8 +302,8 @@
                     }
                   ]
                 },
-                "blockedBy": {
-                  "nodes": []
+                "issueDependenciesSummary": {
+                  "blockedBy": 0
                 }
               }
             ]
@@ -304,6 +332,10 @@
             ]
           },
           "body": "**Spec:** [Graderte andre ytelser fra saksbehandler](https://github.com/navikt/helse-sas-meta/blob/main/docs/specs/graderte-andre-ytelser.md)\n\n**Repo:** `spleis`\n\n**Hva skal lages:** Spleis sender alltid behovet `GraderteAndreYtelserForBeregning` i ytelsesrunden, også i prod. Koden har bare én vei.\n\n**Blokkeres av:** [02: sp-andre-ytelser svarer med versjon og trekk fra sykdomsgrad](https://github.com/navikt/sas-issues/issues/33), [03: Spleis leser løsningen fra sp-andre-ytelser og bruker trekket](https://github.com/navikt/sas-issues/issues/34), [04: Spleis lagrer versjonen på endringen i behandlingen](https://github.com/navikt/sas-issues/issues/35), [05: Spleis lagrer `trekkFraSykdomsgrad` per utbetalingsdag](https://github.com/navikt/sas-issues/issues/36), [06: Spleis varsler når sykdomsgraden er endret etter fordelingen](https://github.com/navikt/sas-issues/issues/37)\n\n## Akseptansekriterier\n\n- [ ] sp-andre-ytelser svarer på behovet i prod, altså er ticket #33 rullet ut.\n- [ ] `Toggle.GraderteAndreYtelser` og miljøvariabelen `GRADERTE_ANDRE_YTELSER` er fjernet fra koden og nais-manifestene.\n- [ ] Tester som slo togglen av og på, er ryddet.\n- [ ] Endringen er rullet ut i prod, og behovet blir løst uten at perioder blir liggende.\n",
+          "issueDependenciesSummary": {
+            "blockedBy": 2,
+            "totalBlockedBy": 5
+          },
           "blockedBy": {
             "nodes": [
               {
@@ -328,8 +360,8 @@
                     }
                   ]
                 },
-                "blockedBy": {
-                  "nodes": []
+                "issueDependenciesSummary": {
+                  "blockedBy": 0
                 }
               },
               {
@@ -354,12 +386,8 @@
                     }
                   ]
                 },
-                "blockedBy": {
-                  "nodes": [
-                    {
-                      "state": "CLOSED"
-                    }
-                  ]
+                "issueDependenciesSummary": {
+                  "blockedBy": 0
                 }
               },
               {
@@ -389,12 +417,8 @@
                     }
                   ]
                 },
-                "blockedBy": {
-                  "nodes": [
-                    {
-                      "state": "CLOSED"
-                    }
-                  ]
+                "issueDependenciesSummary": {
+                  "blockedBy": 0
                 }
               },
               {
@@ -419,8 +443,8 @@
                     }
                   ]
                 },
-                "blockedBy": {
-                  "nodes": []
+                "issueDependenciesSummary": {
+                  "blockedBy": 0
                 }
               },
               {
@@ -445,12 +469,8 @@
                     }
                   ]
                 },
-                "blockedBy": {
-                  "nodes": [
-                    {
-                      "state": "CLOSED"
-                    }
-                  ]
+                "issueDependenciesSummary": {
+                  "blockedBy": 0
                 }
               }
             ]
@@ -479,6 +499,10 @@
             ]
           },
           "body": "**Spec:** [Graderte andre ytelser fra saksbehandler](https://github.com/navikt/helse-sas-meta/blob/main/docs/specs/graderte-andre-ytelser.md)\n\n**Repo:** `speil`\n\n**Hva skal lages:** Speil har en rute som videresender til sp-andre-ytelser i dev, en mock med de samme reglene som sp-andre-ytelser lokalt, og genererte typer og hooks for API-et. Skjemaet tar dem i bruk i [09](https://github.com/navikt/sas-issues/issues/40).\n\n**Blokkeres av:** Ingen (kan starte med en gang)\n\n## Akseptansekriterier\n\n- [x] `GET` og `POST` på `/api/andre-ytelser/personer/{personPseudoId}/graderte-andre-ytelser` videresendes til sp-andre-ytelser i dev.\n- [x] Lokalt svarer en mock. Den lagrer fordelinger per yrkesaktivitet med versjon og hendelser, og fyller inn `fra`-feltene, også `fraSykdomsgradFørFordeling`.\n- [x] Mocken håndhever reglene 1–6 i specen med de samme feilkodene. Den svarer 409 `UTDATERT_TILSTAND` ved feil versjon og 400 `MANGLER_ENDRINGER` uten dager.\n- [x] En forespørsel uten reelle endringer gir samme versjon og ingen ny hendelse.\n- [x] `orval.config.ts` har et prosjekt for sp-andre-ytelser, og typer og hooks for `graderte-andre-ytelser` og visningen av saksbehandlerhandlinger er generert fra det.\n- [x] Skriptet `lokal-andre-ytelser` i `package.json` bruker backendnavnet i `backends.ts`. Begge heter `andre-ytelser`.\n- [x] Tester dekker lagring, `fra`-felter, hver feilkode, 409 og forespørsler uten endring.\n",
+          "issueDependenciesSummary": {
+            "blockedBy": 0,
+            "totalBlockedBy": 0
+          },
           "blockedBy": {
             "nodes": []
           }
@@ -506,6 +530,10 @@
             ]
           },
           "body": "**Spec:** [Graderte andre ytelser fra saksbehandler](https://github.com/navikt/helse-sas-meta/blob/main/docs/specs/graderte-andre-ytelser.md)\n\n**Repo:** `speil`\n\n**Brukerhistorier:** 1, 14, 27\n\n**Hva skal lages:** Saksbehandler kan hente og lagre fordelinger av dagen mot sp-andre-ytelser i dev, og lokalt mot mocken. Hver dag i forespørselen har `sykdomsgradFørFordeling`. Spesialist har fjernet sin løsning, så Speil kan ikke lenger bruke Spesialist-stien og Spesialist-typene for graderte andre ytelser. API-et krever `sykdomsgradFørFordeling`, så byttet og det nye feltet må komme samtidig.\n\n**Blokkeres av:** [08: Speil videresender og mocker API-et til sp-andre-ytelser](https://github.com/navikt/sas-issues/issues/39)\n\n## Akseptansekriterier\n\n- [x] Henting og lagring av fordelinger i dagoversikten bruker de genererte hooksene mot `/api/andre-ytelser/...`.\n- [x] Stubben og ruten under `/api/spesialist/personer/[pseudoId]/graderte-andre-ytelser` og mocklagringen i `spesialist-mock` er fjernet, sammen med bruken av Spesialist-typene og de gamle feilkodene `NEGATIV_GRAD` og `TOTAL_GRAD_OVER_100`.\n- [x] `sykdomsgradFørFordeling` er sykdomsgraden til dagen i Spleis, slik den vises i dagoversikten. Saksbehandler skriver den ikke inn selv. Feltet «Innvilget grad» (`innvigletGrad`) blir stående i skjemaet, men verdien sendes ikke.\n- [x] Når saksbehandler fordeler flere dager samtidig, får hver dag sin egen `sykdomsgradFørFordeling`.\n- [x] `arbeidsgrad` regnes ut som `100 − sykdomsgrad − summen av andreYtelserGrader`, som i dag.\n- [x] Tester dekker henting, lagring av én dag og av flere dager med ulik sykdomsgrad, en dag som allerede har en fordeling, og 409 `UTDATERT_TILSTAND`.\n",
+          "issueDependenciesSummary": {
+            "blockedBy": 0,
+            "totalBlockedBy": 1
+          },
           "blockedBy": {
             "nodes": [
               {
@@ -530,8 +558,8 @@
                     }
                   ]
                 },
-                "blockedBy": {
-                  "nodes": []
+                "issueDependenciesSummary": {
+                  "blockedBy": 0
                 }
               }
             ]
@@ -560,6 +588,10 @@
             ]
           },
           "body": "**Spec:** [Graderte andre ytelser fra saksbehandler](https://github.com/navikt/helse-sas-meta/blob/main/docs/specs/graderte-andre-ytelser.md)\n\n**Repo:** `speil`\n\n**Brukerhistorier:** 10\n\n**Hva skal lages:** Saksbehandler og beslutter ser i en ny kolonne, «Andre ytelser», hvilke dager som har graderte andre ytelser, og hvordan dagen er fordelt. I dag henter Speil de lagrede fordelingene, men bruker dem bare til å sjekke om en endring er reell (`erReellEndring`). De vises ingen steder, og dagoversikten har ingen kolonne for dem.\n\n**Blokkeres av:** [09: Speil lagrer fordelingene i sp-andre-ytelser med sykdomsgraden før fordeling](https://github.com/navikt/sas-issues/issues/40)\n\n## Akseptansekriterier\n\n- [x] Dagoversikten har en ny kolonne med overskriften «Andre ytelser», mellom Grad og Total grad.\n- [x] For en dag med en fordeling viser kolonnen den samlede graden for de andre ytelsene, for eksempel «40 %».\n- [x] Kolonnen Merknader viser hvilke ytelser dagen er gradert mot, kommaseparert, for eksempel «Pleiepenger, foreldrepenger».\n- [x] Kolonnen viser «-» for dager uten fordeling og er tom for helgedager, som de andre kolonnene.\n- [x] Fordelingen hentes for yrkesaktiviteten som tabellen gjelder. Fordelinger for andre yrkesaktiviteter vises ikke.\n- [x] Dager uten fordeling vises som før.\n- [x] Kolonnen og merknaden vises også i den skrivebeskyttede dagoversikten (`ReadonlyUtbetaling`), som beslutter ser. I dag henter bare `OverstyrbarUtbetaling` fordelingene.\n- [x] Kolonnen og visningen er bak togglen for graderte andre ytelser. Uten togglen ser dagoversikten ut som før.\n- [x] Tester dekker kolonneoverskriften med togglen av og på, en dag med fordeling og merknaden, en dag uten fordeling en fordeling for en annen yrkesaktivitet og den skrivebeskyttede dagoversikten.\n\n## Merknader fra implementasjonen\n\n- Kolonnen står rett etter Grad, før Kilde.\n",
+          "issueDependenciesSummary": {
+            "blockedBy": 0,
+            "totalBlockedBy": 1
+          },
           "blockedBy": {
             "nodes": [
               {
@@ -584,12 +616,8 @@
                     }
                   ]
                 },
-                "blockedBy": {
-                  "nodes": [
-                    {
-                      "state": "CLOSED"
-                    }
-                  ]
+                "issueDependenciesSummary": {
+                  "blockedBy": 0
                 }
               }
             ]
@@ -618,6 +646,10 @@
             ]
           },
           "body": "**Spec:** [Graderte andre ytelser fra saksbehandler](https://github.com/navikt/helse-sas-meta/blob/main/docs/specs/graderte-andre-ytelser.md)\n\n**Repo:** `speil`\n\n**Brukerhistorier:** 12\n\n**Hva skal lages:** I kolonnen «Andre ytelser» står et ikon for endringsloggen ved siden av graden, som for overstyringer i Kilde-kolonnen. Endringsloggen viser endringer av fordelingen for dagen: hvem som endret, når, notatet til beslutter og hva som ble endret fra og til. I dag har Speil bare endringslogg for overstyringer av tidslinjen fra Spleis (`KildeCell`). Dager med graderte andre ytelser sendes ikke som overstyring, så de får ingen endringslogg.\n\n**Blokkeres av:** [10: Dagoversikten får kolonnen «Andre ytelser» med fordelingen for hver dag](https://github.com/navikt/sas-issues/issues/41)\n\n## Akseptansekriterier\n\n- [x] Endringsloggen bygges fra `events` i `GET` fra sp-andre-ytelser, med `tidspunkt`, `utfortAvSaksbehandlerIdent`, `notatTilBeslutter` og dagene i hver hendelse.\n- [x] Hver endring viser ytelsene, sykdomsgraden og arbeidsgraden fra og til. Den første fordelingen av en dag har ingen `fra`-verdier.\n- [x] Ikonet vises bare for dager med endringer av fordelingen, ved siden av graden i kolonnen «Andre ytelser». Ikonet står etter graden, som i skissene i Figma.\n- [x] Endringene vises sortert på tidspunkt, med den nyeste først.\n- [x] Endringsloggen for overstyringer av tidslinjen i Kilde-kolonnen er som før.\n- [x] Tester dekker én endring, flere endringer av samme dag, fjerning av ytelser og en dag som også har en overstyring av tidslinjen.\n",
+          "issueDependenciesSummary": {
+            "blockedBy": 0,
+            "totalBlockedBy": 1
+          },
           "blockedBy": {
             "nodes": [
               {
@@ -642,12 +674,8 @@
                     }
                   ]
                 },
-                "blockedBy": {
-                  "nodes": [
-                    {
-                      "state": "CLOSED"
-                    }
-                  ]
+                "issueDependenciesSummary": {
+                  "blockedBy": 0
                 }
               }
             ]
@@ -676,6 +704,10 @@
             ]
           },
           "body": "**Spec:** [Graderte andre ytelser fra saksbehandler](https://github.com/navikt/helse-sas-meta/blob/main/docs/specs/graderte-andre-ytelser.md)\n\n**Repo:** `speil`\n\n**Brukerhistorier:** 4, 5, 6, 7\n\n**Hva skal lages:** Saksbehandler får feilmelding i skjemaet før lagring når fordelingen ikke går opp, i stedet for en feil fra backend.\n\n**Blokkeres av:** [09: Speil lagrer fordelingene i sp-andre-ytelser med sykdomsgraden før fordeling](https://github.com/navikt/sas-issues/issues/40)\n\n## Akseptansekriterier\n\n- [ ] Sykdomsgraden må være mellom 1 og sykdomsgraden før fordeling.\n- [ ] En dag som ikke har sykdomsgrad i Spleis, for eksempel en feriedag, kan ikke fordeles. I dag sender Speil 0 som sykdomsgrad før fordeling, og sp-andre-ytelser svarer 400 `GRAD_UTENFOR_GRENSER`.\n- [ ] Sykdomsgrad + ytelsesgrad må være minst sykdomsgraden før fordeling, altså at arbeidsgraden ikke øker.\n- [ ] Sykdomsgrad + ytelsesgrad kan ikke være over 100, altså at arbeidsgraden ikke blir negativ.\n- [ ] Ytelsesgraden må være mellom 1 og 99. I dag godtar skjemaet 100.\n- [ ] Feilmeldingene sier hva saksbehandler må rette.\n- [ ] Tester dekker grensene rundt hver regel.\n",
+          "issueDependenciesSummary": {
+            "blockedBy": 0,
+            "totalBlockedBy": 1
+          },
           "blockedBy": {
             "nodes": [
               {
@@ -700,12 +732,8 @@
                     }
                   ]
                 },
-                "blockedBy": {
-                  "nodes": [
-                    {
-                      "state": "CLOSED"
-                    }
-                  ]
+                "issueDependenciesSummary": {
+                  "blockedBy": 0
                 }
               }
             ]
@@ -734,6 +762,10 @@
             ]
           },
           "body": "**Spec:** [Graderte andre ytelser fra saksbehandler](https://github.com/navikt/helse-sas-meta/blob/main/docs/specs/graderte-andre-ytelser.md)\n\n**Repo:** `speil`\n\n**Brukerhistorier:** 4, 5, 6, 7, 9, 13\n\n**Hva skal lages:** Hvis sp-andre-ytelser avviser en fordeling, ser saksbehandler hvilken regel som ble brutt, ikke en generell feilmelding.\n\n**Blokkeres av:** [09: Speil lagrer fordelingene i sp-andre-ytelser med sykdomsgraden før fordeling](https://github.com/navikt/sas-issues/issues/40)\n\n## Akseptansekriterier\n\n- [ ] `GRAD_UTENFOR_GRENSER`, `SUM_ER_IKKE_100`, `ARBEIDSGRAD_OKER`, `YTELSER_MANGLER_TREKK` og `MANGLER_ENDRINGER` får hver sin melding.\n- [ ] `UTDATERT_TILSTAND` beholder meldingen om at noen andre har endret fordelingene.\n- [ ] 403 fra sp-andre-ytelser, når saksbehandler mangler skrivetilgang til personen, gir en melding om manglende tilgang.\n- [ ] Ukjente feilkoder gir den generelle meldingen.\n- [ ] Når lagringen feiler, forsvinner «visningen oppdateres», og saksbehandler kan rette og prøve igjen.\n- [ ] Tester dekker hver feilkode.\n",
+          "issueDependenciesSummary": {
+            "blockedBy": 0,
+            "totalBlockedBy": 1
+          },
           "blockedBy": {
             "nodes": [
               {
@@ -758,12 +790,8 @@
                     }
                   ]
                 },
-                "blockedBy": {
-                  "nodes": [
-                    {
-                      "state": "CLOSED"
-                    }
-                  ]
+                "issueDependenciesSummary": {
+                  "blockedBy": 0
                 }
               }
             ]
@@ -792,6 +820,10 @@
             ]
           },
           "body": "**Spec:** [Graderte andre ytelser fra saksbehandler](https://github.com/navikt/helse-sas-meta/blob/main/docs/specs/graderte-andre-ytelser.md)\n\n**Repo:** `speil`\n\n**Brukerhistorier:** 8\n\n**Hva skal lages:** Når saksbehandler endrer en dag med graderte andre ytelser tilbake til en vanlig sykedag, fjernes fordelingen i sp-andre-ytelser. Trekket for dagen blir 0.\n\n**Blokkeres av:** [10: Dagoversikten får kolonnen «Andre ytelser» med fordelingen for hver dag](https://github.com/navikt/sas-issues/issues/41)\n\n## Akseptansekriterier\n\n- [ ] Speil sender dagen med tom `andreYtelserGrader` og `sykdomsgrad` lik `sykdomsgradFørFordeling`.\n- [ ] Dagen vises uten graderte andre ytelser etter lagring.\n- [ ] Dager som aldri har hatt graderte andre ytelser, sendes ikke til sp-andre-ytelser.\n- [ ] Tester dekker fjerning, og at uendrede dager ikke sendes.\n",
+          "issueDependenciesSummary": {
+            "blockedBy": 0,
+            "totalBlockedBy": 1
+          },
           "blockedBy": {
             "nodes": [
               {
@@ -816,12 +848,8 @@
                     }
                   ]
                 },
-                "blockedBy": {
-                  "nodes": [
-                    {
-                      "state": "CLOSED"
-                    }
-                  ]
+                "issueDependenciesSummary": {
+                  "blockedBy": 0
                 }
               }
             ]
@@ -850,6 +878,10 @@
             ]
           },
           "body": "**Spec:** [Graderte andre ytelser fra saksbehandler](https://github.com/navikt/helse-sas-meta/blob/main/docs/specs/graderte-andre-ytelser.md)\n\n**Repo:** `speil`\n\n**Hva skal lages:** Når sp-andre-ytelser svarer med samme versjon som før, vet Speil at ingenting ble endret. Saksbehandler ser ikke «visningen oppdateres» og blir ikke stående og vente.\n\n**Blokkeres av:** [09: Speil lagrer fordelingene i sp-andre-ytelser med sykdomsgraden før fordeling](https://github.com/navikt/sas-issues/issues/40)\n\n## Akseptansekriterier\n\n- [ ] Speil sammenligner versjonen i svaret med versjonen som ble sendt.\n- [ ] Ved samme versjon venter ikke Speil på oppdatering for fordelingene, men lagrer fortsatt eventuelle endringer i tidslinjen.\n- [ ] Tester dekker samme versjon, ny versjon og lagring sammen med endringer i tidslinjen.\n",
+          "issueDependenciesSummary": {
+            "blockedBy": 0,
+            "totalBlockedBy": 1
+          },
           "blockedBy": {
             "nodes": [
               {
@@ -874,12 +906,8 @@
                     }
                   ]
                 },
-                "blockedBy": {
-                  "nodes": [
-                    {
-                      "state": "CLOSED"
-                    }
-                  ]
+                "issueDependenciesSummary": {
+                  "blockedBy": 0
                 }
               }
             ]
@@ -908,6 +936,10 @@
             ]
           },
           "body": "**Spec:** [Graderte andre ytelser fra saksbehandler](https://github.com/navikt/helse-sas-meta/blob/main/docs/specs/graderte-andre-ytelser.md)\n\n**Repo:** `speil`\n\n**Brukerhistorier:** 12\n\n**Hva skal lages:** I historikkpanelet kan beslutter åpne en saksbehandlerhandling av typen `GRADERTE_ANDRE_YTELSER_ENDRET` og se hvem som endret, når, notatet til beslutter og endringene per dag. Endringsloggen per dag i dagoversikten er [11](https://github.com/navikt/sas-issues/issues/42).\n\n**Blokkeres av:** [08: Speil videresender og mocker API-et til sp-andre-ytelser](https://github.com/navikt/sas-issues/issues/39)\n\n## Akseptansekriterier\n\n- [ ] Visningen hentes fra sp-andre-ytelser, med videresending i dev og mock lokalt.\n- [ ] `tilVisningUrl` gir en URL til sp-andre-ytelser for `GRADERTE_ANDRE_YTELSER_ENDRET`. I dag gir den `null`, så innslaget kan ikke åpnes.\n- [ ] `handlingsvisningSchema` støtter felttypen `ENDRINGER`, som vises som grupper med rader fra og til, i tillegg til `TEKST`.\n- [ ] Ukjent eller ugyldig handling gir samme melding som andre handlinger som ikke finnes.\n- [ ] Tester dekker visningen av begge felttypene.\n",
+          "issueDependenciesSummary": {
+            "blockedBy": 0,
+            "totalBlockedBy": 1
+          },
           "blockedBy": {
             "nodes": [
               {
@@ -932,8 +964,8 @@
                     }
                   ]
                 },
-                "blockedBy": {
-                  "nodes": []
+                "issueDependenciesSummary": {
+                  "blockedBy": 0
                 }
               }
             ]
@@ -962,6 +994,10 @@
             ]
           },
           "body": "**Spec:** [Graderte andre ytelser fra saksbehandler](https://github.com/navikt/helse-sas-meta/blob/main/docs/specs/graderte-andre-ytelser.md)\n\n**Repo:** `speil`\n\n**Hva skal lages:** Saksbehandlere i prod kan fordele dager og se historikken.\n\n**Blokkeres av:** [02: sp-andre-ytelser svarer med versjon og trekk fra sykdomsgrad](https://github.com/navikt/sas-issues/issues/33), [08: Speil videresender og mocker API-et til sp-andre-ytelser](https://github.com/navikt/sas-issues/issues/39), [09: Speil lagrer fordelingene i sp-andre-ytelser med sykdomsgraden før fordeling](https://github.com/navikt/sas-issues/issues/40), [10: Dagoversikten får kolonnen «Andre ytelser» med fordelingen for hver dag](https://github.com/navikt/sas-issues/issues/41), [11: Saksbehandler og beslutter ser endringsloggen for fordelingen per dag](https://github.com/navikt/sas-issues/issues/42), [12: Skjemaet stopper fordelinger som bryter reglene](https://github.com/navikt/sas-issues/issues/43), [13: Saksbehandler får presise feilmeldinger fra sp-andre-ytelser](https://github.com/navikt/sas-issues/issues/44), [14: Saksbehandler kan fjerne graderte andre ytelser fra en dag](https://github.com/navikt/sas-issues/issues/45), [15: Lagring uten reelle endringer venter ikke på oppdatering](https://github.com/navikt/sas-issues/issues/46) og [16: Beslutter ser endringer av fordelingene i historikkpanelet](https://github.com/navikt/sas-issues/issues/47). Speil går i prod med én ytelse per dag.\n\n## Akseptansekriterier\n\n- [ ] sp-andre-ytelser er satt opp som backend i prod, med tilgangspolicy og miljøvariabler.\n- [ ] Backenden er ikke lenger begrenset til dev.\n- [ ] Det er avklart hvem som skal se funksjonen i prod. I dag viser togglen den bare til coach, fagkoordinator og supersaksbehandler.\n- [ ] Rullet ut i prod, og en fordeling er lagret og vist uten feil.\n",
+          "issueDependenciesSummary": {
+            "blockedBy": 6,
+            "totalBlockedBy": 10
+          },
           "blockedBy": {
             "nodes": [
               {
@@ -986,12 +1022,8 @@
                     }
                   ]
                 },
-                "blockedBy": {
-                  "nodes": [
-                    {
-                      "state": "CLOSED"
-                    }
-                  ]
+                "issueDependenciesSummary": {
+                  "blockedBy": 0
                 }
               },
               {
@@ -1016,8 +1048,8 @@
                     }
                   ]
                 },
-                "blockedBy": {
-                  "nodes": []
+                "issueDependenciesSummary": {
+                  "blockedBy": 0
                 }
               },
               {
@@ -1042,12 +1074,8 @@
                     }
                   ]
                 },
-                "blockedBy": {
-                  "nodes": [
-                    {
-                      "state": "CLOSED"
-                    }
-                  ]
+                "issueDependenciesSummary": {
+                  "blockedBy": 0
                 }
               },
               {
@@ -1072,12 +1100,8 @@
                     }
                   ]
                 },
-                "blockedBy": {
-                  "nodes": [
-                    {
-                      "state": "CLOSED"
-                    }
-                  ]
+                "issueDependenciesSummary": {
+                  "blockedBy": 0
                 }
               },
               {
@@ -1102,12 +1126,8 @@
                     }
                   ]
                 },
-                "blockedBy": {
-                  "nodes": [
-                    {
-                      "state": "CLOSED"
-                    }
-                  ]
+                "issueDependenciesSummary": {
+                  "blockedBy": 0
                 }
               },
               {
@@ -1132,12 +1152,8 @@
                     }
                   ]
                 },
-                "blockedBy": {
-                  "nodes": [
-                    {
-                      "state": "CLOSED"
-                    }
-                  ]
+                "issueDependenciesSummary": {
+                  "blockedBy": 0
                 }
               },
               {
@@ -1162,12 +1178,8 @@
                     }
                   ]
                 },
-                "blockedBy": {
-                  "nodes": [
-                    {
-                      "state": "CLOSED"
-                    }
-                  ]
+                "issueDependenciesSummary": {
+                  "blockedBy": 0
                 }
               },
               {
@@ -1192,12 +1204,8 @@
                     }
                   ]
                 },
-                "blockedBy": {
-                  "nodes": [
-                    {
-                      "state": "CLOSED"
-                    }
-                  ]
+                "issueDependenciesSummary": {
+                  "blockedBy": 0
                 }
               },
               {
@@ -1227,12 +1235,8 @@
                     }
                   ]
                 },
-                "blockedBy": {
-                  "nodes": [
-                    {
-                      "state": "CLOSED"
-                    }
-                  ]
+                "issueDependenciesSummary": {
+                  "blockedBy": 0
                 }
               },
               {
@@ -1257,12 +1261,8 @@
                     }
                   ]
                 },
-                "blockedBy": {
-                  "nodes": [
-                    {
-                      "state": "CLOSED"
-                    }
-                  ]
+                "issueDependenciesSummary": {
+                  "blockedBy": 0
                 }
               }
             ]

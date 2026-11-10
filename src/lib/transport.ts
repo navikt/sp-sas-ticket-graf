@@ -1,7 +1,14 @@
 import "server-only";
 
 import { TtlCache } from "./cache";
-import { EPIC_ISSUES_QUERY, EPICS_QUERY, type EpicIssuesResponse, type Transport } from "./github";
+import {
+  EPIC_ISSUES_QUERY,
+  EPIC_SUMMARY_QUERY,
+  EPICS_QUERY,
+  type EpicIssuesResponse,
+  type EpicSummaryResponse,
+  type Transport,
+} from "./github";
 import epics from "../../fixtures/epics.json";
 import avklareRettighetskategori from "../../fixtures/epic-avklare-rettighetskategori.json";
 import eksempel from "../../fixtures/epic-eksempel.json";
@@ -18,10 +25,10 @@ export function clearGitHubCache() {
   cache.clear();
 }
 
-const epicFixtures: Record<string, unknown> = {
-  "epic:avklare-rettighetskategori": avklareRettighetskategori,
-  "epic:eksempel": eksempel,
-  "epic:graderte-andre-ytelser": graderteAndreYtelser,
+const epicFixtures: Record<string, EpicIssuesResponse> = {
+  "epic:avklare-rettighetskategori": avklareRettighetskategori as EpicIssuesResponse,
+  "epic:eksempel": eksempel as EpicIssuesResponse,
+  "epic:graderte-andre-ytelser": graderteAndreYtelser as EpicIssuesResponse,
 };
 
 const emptyEpic: EpicIssuesResponse = {
@@ -44,9 +51,28 @@ export function transport(): Transport {
 
 const fixtureTransport: Transport = async <T>(query: string, variables: Record<string, unknown>) => {
   if (query === EPICS_QUERY) return epics as T;
-  if (query === EPIC_ISSUES_QUERY) return (epicFixtures[String(variables.label)] ?? emptyEpic) as T;
+  const epic = epicFixtures[String(variables.label)] ?? emptyEpic;
+  if (query === EPIC_ISSUES_QUERY) return epic as T;
+  if (query === EPIC_SUMMARY_QUERY) return toSummary(epic) as T;
   throw new Error("Ukjent spørring i mock");
 };
+
+function toSummary(epic: EpicIssuesResponse): EpicSummaryResponse {
+  const { nodes, pageInfo } = epic.repository.issues;
+  return {
+    repository: {
+      issues: {
+        pageInfo,
+        nodes: nodes.map((it) => ({
+          state: it.state,
+          assignees: { totalCount: it.assignees.nodes.length },
+          labels: it.labels,
+          issueDependenciesSummary: it.issueDependenciesSummary,
+        })),
+      },
+    },
+  };
+}
 
 const gitHubTransport: Transport = async <T>(query: string, variables: Record<string, unknown>) => {
   const token = process.env.GITHUB_TOKEN;

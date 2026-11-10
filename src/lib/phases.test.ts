@@ -74,6 +74,7 @@ describe("utledede faser", () => {
     body: "",
     assignees: [],
     labels: ["epic:x"],
+    openBlockerCount: blockers.length,
     blockedBy: blockers.map((it) => ({
       repository: "navikt/sas-issues",
       number: it,
