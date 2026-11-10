@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ErrorPanel } from "@/components/ErrorPanel";
 import { Progress } from "@/components/Progress";
-import { loadEpicCounts, loadEpics } from "@/lib/data";
+import { loadEpicSummary, loadEpics } from "@/lib/data";
 import { epicTitle } from "@/lib/format";
 import { statusStyle } from "@/lib/status-style";
 import { type Epic, isEpicDone, type Status, STATUSES } from "@/lib/tickets";
@@ -14,7 +14,9 @@ export default async function Home() {
   let overview: EpicOverview[];
   try {
     const epics = await loadEpics();
-    overview = await Promise.all(epics.map(async (epic) => ({ epic, counts: await loadEpicCounts(epic.slug) })));
+    overview = await Promise.all(
+      epics.map(async (epic) => ({ epic, counts: (await loadEpicSummary(epic.slug)).counts })),
+    );
   } catch (error) {
     return <ErrorPanel error={error} />;
   }
@@ -28,6 +30,9 @@ export default async function Home() {
       <p className="mt-2 text-slate-600">
         Velg en epic for å se avhengighetene mellom ticketene og hvor langt dere har kommet.
       </p>
+      <Link href="/tidslinje" className="mt-2 inline-block font-medium text-blue-700 underline hover:text-blue-900">
+        Se tidslinjen
+      </Link>
 
       {overview.length === 0 ? (
         <p className="mt-10 rounded-2xl border border-dashed border-slate-300 bg-white p-8 text-center text-slate-500">

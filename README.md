@@ -24,6 +24,7 @@ pnpm dev:mock
 
 - **Epic:** hver label som begynner med `epic:` blir en epic. Slugen etter `epic:` er adressen, for eksempel `/avklare-rettighetskategori`.
 - **Ferdig epic:** en epic der alle ticketene er lukket. Forsiden legger ferdige epicer i en egen seksjon som er lukket til du åpner den.
+- **Levert:** datoen siste ticket (uten specen) i en ferdig epic ble lukket, vist på `/tidslinje`.
 - **Spec:** issuet med labelen `spec-issue` i epicen er specen. Det tegnes ikke som en ticket, men tittelen blir overskriften og lenker til issuet.
 - **Avhengigheter:** GitHubs innebygde «blocked by». En pil går fra blokkereren til ticketen den blokkerer.
 - **Fase:** linjen `**Fase:** <n>` i issue-teksten. Tickets i samme fase tegnes i en egen boks. Boksen blir grønn med datoen for siste lukking når hele fasen er ferdig, og stiplet når ingenting i fasen er påbegynt.

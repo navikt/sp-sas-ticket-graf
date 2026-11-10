@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { fetchEpicCounts, fetchEpicIssues, fetchEpics, type Transport } from "./github";
+import { fetchEpicSummary, fetchEpicIssues, fetchEpics, type Transport } from "./github";
 import { layoutGraph, TICKET_HEIGHT, TICKET_WIDTH } from "./layout";
 import { buildEpicGraph, deriveStatus, isEpicDone, parseFase, parseRepos, type Issue } from "./tickets";
 import epics from "../../fixtures/epics.json";
@@ -32,10 +32,17 @@ describe("deriveStatus", () => {
   });
 });
 
-describe("fetchEpicCounts", () => {
+describe("fetchEpicSummary", () => {
   it("teller statusene uten specen", async () => {
-    const node = (state: "OPEN" | "CLOSED", assignees: number, openBlockers: number, labels: string[] = []) => ({
+    const node = (
+      state: "OPEN" | "CLOSED",
+      assignees: number,
+      openBlockers: number,
+      labels: string[] = [],
+      closedAt: string | null = null,
+    ) => ({
       state,
+      closedAt,
       assignees: { totalCount: assignees },
       labels: { nodes: labels.map((name) => ({ name })) },
       issueDependenciesSummary: { blockedBy: openBlockers },
@@ -46,7 +53,7 @@ describe("fetchEpicCounts", () => {
           issues: {
             pageInfo: { hasNextPage: false, endCursor: null },
             nodes: [
-              node("OPEN", 0, 0, ["spec-issue"]),
+              node("CLOSED", 0, 0, ["spec-issue"], "2026-10-25T10:00:00Z"),
               node("CLOSED", 1, 1),
               node("OPEN", 1, 1),
               node("OPEN", 0, 2),
@@ -57,7 +64,78 @@ describe("fetchEpicCounts", () => {
         },
       }) as T;
 
-    expect(await fetchEpicCounts(transport, "x")).toEqual({ ferdig: 1, pågår: 1, blokkert: 1, klar: 2 });
+    expect(await fetchEpicSummary(transport, "x")).toEqual({
+      counts: { ferdig: 1, pågår: 1, blokkert: 1, klar: 2 },
+      deliveredAt: null,
+    });
+  });
+
+  it("bruker siste closedAt når alle tickets er lukket, men ignorerer specen", async () => {
+    const transport: Transport = async <T>() =>
+      ({
+        repository: {
+          issues: {
+            pageInfo: { hasNextPage: false, endCursor: null },
+            nodes: [
+              {
+                state: "CLOSED",
+                closedAt: "2026-10-25T10:00:00Z",
+                assignees: { totalCount: 0 },
+                labels: { nodes: [{ name: "spec-issue" }] },
+                issueDependenciesSummary: { blockedBy: 0 },
+              },
+              {
+                state: "CLOSED",
+                closedAt: "2026-10-10T10:00:00Z",
+                assignees: { totalCount: 0 },
+                labels: { nodes: [] },
+                issueDependenciesSummary: { blockedBy: 0 },
+              },
+              {
+                state: "CLOSED",
+                closedAt: "2026-10-20T10:00:00Z",
+                assignees: { totalCount: 0 },
+                labels: { nodes: [] },
+                issueDependenciesSummary: { blockedBy: 0 },
+              },
+            ],
+          },
+        },
+      }) as T;
+
+    expect(await fetchEpicSummary(transport, "x")).toEqual({
+      counts: { ferdig: 2, pågår: 0, blokkert: 0, klar: 0 },
+      deliveredAt: "2026-10-20T10:00:00Z",
+    });
+  });
+
+  it("returnerer null for deliveredAt når noe er åpent", async () => {
+    const transport: Transport = async <T>() =>
+      ({
+        repository: {
+          issues: {
+            pageInfo: { hasNextPage: false, endCursor: null },
+            nodes: [
+              {
+                state: "CLOSED",
+                closedAt: "2026-10-10T10:00:00Z",
+                assignees: { totalCount: 0 },
+                labels: { nodes: [] },
+                issueDependenciesSummary: { blockedBy: 0 },
+              },
+              {
+                state: "OPEN",
+                closedAt: null,
+                assignees: { totalCount: 0 },
+                labels: { nodes: [] },
+                issueDependenciesSummary: { blockedBy: 0 },
+              },
+            ],
+          },
+        },
+      }) as T;
+
+    expect((await fetchEpicSummary(transport, "x")).deliveredAt).toBeNull();
   });
 });
 

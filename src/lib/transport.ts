@@ -67,6 +67,7 @@ function toSummary(epic: EpicIssuesResponse): EpicSummaryResponse {
         pageInfo,
         nodes: nodes.map((it) => ({
           state: it.state,
+          closedAt: it.closedAt,
           assignees: { totalCount: it.assignees.nodes.length },
           labels: it.labels,
           issueDependenciesSummary: it.issueDependenciesSummary,

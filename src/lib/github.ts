@@ -2,6 +2,7 @@ import {
   countStatuses,
   deriveStatus,
   EPIC_PREFIX,
+  isEpicDone,
   SPEC_LABEL,
   type Assignee,
   type Blocker,
@@ -107,6 +108,7 @@ export const EPIC_SUMMARY_QUERY = /* GraphQL */ `
         }
         nodes {
           state
+          closedAt
           assignees {
             totalCount
           }
@@ -151,6 +153,7 @@ interface IssueNode extends IssueFields {
 
 interface SummaryNode {
   state: "OPEN" | "CLOSED";
+  closedAt: string | null;
   assignees: { totalCount: number };
   labels: Nodes<{ name: string }>;
   issueDependenciesSummary: { blockedBy: number };
@@ -169,6 +172,11 @@ export interface EpicsResponse {
 export type EpicIssuesResponse = Page<IssueNode>;
 export type EpicSummaryResponse = Page<SummaryNode>;
 
+export interface EpicSummary {
+  counts: Record<Status, number>;
+  deliveredAt: string | null;
+}
+
 export async function fetchEpics(transport: Transport): Promise<Epic[]> {
   const data = await transport<EpicsResponse>(EPICS_QUERY, { owner: OWNER, name: REPO });
   return data.repository.labels.nodes
@@ -182,19 +190,26 @@ export async function fetchEpicIssues(transport: Transport, epic: string): Promi
   return nodes.map(toIssue);
 }
 
-export async function fetchEpicCounts(transport: Transport, epic: string): Promise<Record<Status, number>> {
+export async function fetchEpicSummary(transport: Transport, epic: string): Promise<EpicSummary> {
   const nodes = await fetchAllPages<SummaryNode>(transport, EPIC_SUMMARY_QUERY, epic);
-  return countStatuses(
-    nodes
-      .filter((it) => !it.labels.nodes.some((label) => label.name === SPEC_LABEL))
-      .map((it) =>
-        deriveStatus({
-          state: it.state,
-          assigneeCount: it.assignees.totalCount,
-          openBlockerCount: it.issueDependenciesSummary.blockedBy,
-        }),
-      ),
+  const issues = nodes.filter((it) => !it.labels.nodes.some((label) => label.name === SPEC_LABEL));
+  const counts = countStatuses(
+    issues.map((it) =>
+      deriveStatus({
+        state: it.state,
+        assigneeCount: it.assignees.totalCount,
+        openBlockerCount: it.issueDependenciesSummary.blockedBy,
+      }),
+    ),
   );
+  const deliveredAt = isEpicDone(counts)
+    ? issues
+        .map((it) => it.closedAt)
+        .filter((it): it is string => it !== null)
+        .sort((a, b) => Date.parse(b) - Date.parse(a))[0] ?? null
+    : null;
+
+  return { counts, deliveredAt };
 }
 
 async function fetchAllPages<T>(transport: Transport, query: string, epic: string): Promise<T[]> {

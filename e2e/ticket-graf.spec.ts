@@ -22,6 +22,14 @@ test("forsiden skjuler ferdige epicer til du åpner dem", async ({ page }) => {
   await expect(card).toContainText("2/2");
 });
 
+test("tidslinjen viser leveringsdatoen for ferdige epicer", async ({ page }) => {
+  await page.goto("/tidslinje");
+
+  const epic = page.getByTestId("tidslinje-epic").filter({ hasText: "Ferdig eksempel" });
+  await expect(epic.getByTestId("levert")).toHaveText("15. okt. 2026");
+  await expect(epic.getByRole("link", { name: "Ferdig eksempel" })).toHaveAttribute("href", "/ferdig-eksempel");
+});
+
 test("viser grafen for en epic med status, fase og lenke til issuet", async ({ page }) => {
   await page.goto("/eksempel");
 
