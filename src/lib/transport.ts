@@ -12,6 +12,7 @@ import {
 import epics from "../../fixtures/epics.json";
 import avklareRettighetskategori from "../../fixtures/epic-avklare-rettighetskategori.json";
 import eksempel from "../../fixtures/epic-eksempel.json";
+import ferdigEksempel from "../../fixtures/epic-ferdig-eksempel.json";
 import graderteAndreYtelser from "../../fixtures/epic-graderte-andre-ytelser.json";
 
 const GITHUB_GRAPHQL_URL = "https://api.github.com/graphql";
@@ -28,6 +29,7 @@ export function clearGitHubCache() {
 const epicFixtures: Record<string, EpicIssuesResponse> = {
   "epic:avklare-rettighetskategori": avklareRettighetskategori as EpicIssuesResponse,
   "epic:eksempel": eksempel as EpicIssuesResponse,
+  "epic:ferdig-eksempel": ferdigEksempel as EpicIssuesResponse,
   "epic:graderte-andre-ytelser": graderteAndreYtelser as EpicIssuesResponse,
 };
 

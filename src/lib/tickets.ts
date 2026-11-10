@@ -94,6 +94,10 @@ export function countStatuses(statuses: Status[]): Record<Status, number> {
   return counts;
 }
 
+export function isEpicDone(counts: Record<Status, number>): boolean {
+  return counts.ferdig > 0 && STATUSES.every((it) => it === "ferdig" || counts[it] === 0);
+}
+
 export function parseFase(body: string): string | null {
   return body.match(/^\*\*Fase:\*\*\s*(.+?)\s*$/m)?.[1] ?? null;
 }

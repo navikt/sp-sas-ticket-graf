@@ -3,9 +3,23 @@ import { expect, test } from "@playwright/test";
 test("forsiden lister epicene med framdrift", async ({ page }) => {
   await page.goto("/");
 
-  const cards = page.getByTestId("epic-card");
+  const cards = page.getByTestId("aktive-epicer").getByTestId("epic-card");
   await expect(cards).toHaveCount(3);
   await expect(cards.filter({ hasText: "Avklare rettighetskategori" })).toContainText("12/14");
+});
+
+test("forsiden skjuler ferdige epicer til du åpner dem", async ({ page }) => {
+  await page.goto("/");
+
+  const ferdige = page.getByTestId("ferdige-epicer");
+  const card = ferdige.getByTestId("epic-card");
+  await expect(card).toHaveCount(1);
+  await expect(card).toBeHidden();
+
+  await ferdige.getByText("Ferdige epicer (1)").click();
+  await expect(card).toBeVisible();
+  await expect(card).toContainText("Ferdig eksempel");
+  await expect(card).toContainText("2/2");
 });
 
 test("viser grafen for en epic med status, fase og lenke til issuet", async ({ page }) => {

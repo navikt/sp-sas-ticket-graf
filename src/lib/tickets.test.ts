@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { fetchEpicCounts, fetchEpicIssues, fetchEpics, type Transport } from "./github";
 import { layoutGraph, TICKET_HEIGHT, TICKET_WIDTH } from "./layout";
-import { buildEpicGraph, deriveStatus, parseFase, parseRepos, type Issue } from "./tickets";
+import { buildEpicGraph, deriveStatus, isEpicDone, parseFase, parseRepos, type Issue } from "./tickets";
 import epics from "../../fixtures/epics.json";
 import eksempel from "../../fixtures/epic-eksempel.json";
 
@@ -81,8 +81,23 @@ describe("fetchEpics", () => {
     expect(result.map((it) => it.slug)).toEqual([
       "avklare-rettighetskategori",
       "eksempel",
+      "ferdig-eksempel",
       "graderte-andre-ytelser",
     ]);
+  });
+});
+
+describe("isEpicDone", () => {
+  it("er ferdig når alle ticketene er ferdige", () => {
+    expect(isEpicDone({ ferdig: 3, pågår: 0, klar: 0, blokkert: 0 })).toBe(true);
+  });
+
+  it("er ikke ferdig når noe gjenstår", () => {
+    expect(isEpicDone({ ferdig: 3, pågår: 0, klar: 0, blokkert: 1 })).toBe(false);
+  });
+
+  it("er ikke ferdig uten tickets", () => {
+    expect(isEpicDone({ ferdig: 0, pågår: 0, klar: 0, blokkert: 0 })).toBe(false);
   });
 });
 

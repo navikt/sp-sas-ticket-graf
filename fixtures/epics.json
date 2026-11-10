@@ -13,6 +13,10 @@
         {
           "name": "epic:eksempel",
           "description": "Oppdiktet epic med alle statuser og blokkeringer fra andre epicer"
+        },
+        {
+          "name": "epic:ferdig-eksempel",
+          "description": "Oppdiktet epic der alle ticketene er ferdige"
         }
       ]
     }

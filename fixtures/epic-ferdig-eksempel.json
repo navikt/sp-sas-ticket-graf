@@ -1,0 +1,105 @@
+{
+  "repository": {
+    "issues": {
+      "nodes": [
+        {
+          "number": 950,
+          "title": "Eksempel på en ferdig epic",
+          "url": "https://github.com/navikt/sas-issues/issues/950",
+          "state": "CLOSED",
+          "closedAt": "2026-10-20T10:00:00Z",
+          "body": "## Problem\n\nOppdiktet spec for mock.\n",
+          "repository": {
+            "nameWithOwner": "navikt/sas-issues"
+          },
+          "assignees": {
+            "nodes": []
+          },
+          "labels": {
+            "nodes": [
+              {
+                "name": "spec-issue"
+              },
+              {
+                "name": "epic:ferdig-eksempel"
+              }
+            ]
+          },
+          "issueDependenciesSummary": {
+            "blockedBy": 0,
+            "totalBlockedBy": 0
+          },
+          "blockedBy": {
+            "nodes": []
+          }
+        },
+        {
+          "number": 951,
+          "title": "Lage tabellen i sp-ferdig",
+          "url": "https://github.com/navikt/sas-issues/issues/951",
+          "state": "CLOSED",
+          "closedAt": "2026-10-10T10:00:00Z",
+          "body": "**Fase:** 1\n\n**Repo:** `sp-ferdig`\n\n**Hva skal lages:** Oppdiktet ticket for mock.\n",
+          "repository": {
+            "nameWithOwner": "navikt/sas-issues"
+          },
+          "assignees": {
+            "nodes": []
+          },
+          "labels": {
+            "nodes": [
+              {
+                "name": "spec-ticket"
+              },
+              {
+                "name": "epic:ferdig-eksempel"
+              }
+            ]
+          },
+          "issueDependenciesSummary": {
+            "blockedBy": 0,
+            "totalBlockedBy": 0
+          },
+          "blockedBy": {
+            "nodes": []
+          }
+        },
+        {
+          "number": 952,
+          "title": "Rulle ut sp-ferdig i prod",
+          "url": "https://github.com/navikt/sas-issues/issues/952",
+          "state": "CLOSED",
+          "closedAt": "2026-10-15T10:00:00Z",
+          "body": "**Fase:** 1\n\n**Repo:** `sp-ferdig`\n\n**Hva skal lages:** Oppdiktet ticket for mock.\n",
+          "repository": {
+            "nameWithOwner": "navikt/sas-issues"
+          },
+          "assignees": {
+            "nodes": []
+          },
+          "labels": {
+            "nodes": [
+              {
+                "name": "spec-ticket"
+              },
+              {
+                "name": "epic:ferdig-eksempel"
+              }
+            ]
+          },
+          "issueDependenciesSummary": {
+            "blockedBy": 0,
+            "totalBlockedBy": 0
+          },
+          "blockedBy": {
+            "nodes": []
+          }
+        }
+      ],
+      "pageInfo": {
+        "hasNextPage": false,
+        "endCursor": null
+      }
+    }
+  }
+}
