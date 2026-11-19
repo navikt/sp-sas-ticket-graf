@@ -30,10 +30,14 @@ function compareKey(a: string, b: string): number {
 }
 
 /**
- * Faser kommer fra `**Fase:**` i issuene. Har ingen issues fase, deles epicen ved utrullingene:
- * hver ticket hører til den første utrullingen den leder fram til.
+ * Faser kommer fra `**Fase:**` i issuene, og navnene fra `**Faser:**`-listen i specen. Har ingen issues fase,
+ * deles epicen ved utrullingene: hver ticket hører til den første utrullingen den leder fram til.
  */
-export function derivePhases(tickets: Ticket[], dependencies: Dependency[]): Phase[] {
+export function derivePhases(
+  tickets: Ticket[],
+  dependencies: Dependency[],
+  names: Map<string, string> = new Map(),
+): Phase[] {
   const internal = tickets.filter((it) => !it.external);
   const ids = new Set(internal.map((it) => it.id));
   const edges = dependencies.filter((it) => ids.has(it.blocker) && ids.has(it.blocked));
@@ -41,7 +45,7 @@ export function derivePhases(tickets: Ticket[], dependencies: Dependency[]): Pha
   const blockedBy = groupBy(edges, (it) => it.blocked, (it) => it.blocker);
 
   const membership = internal.some((it) => it.fase)
-    ? explicitMembership(internal)
+    ? explicitMembership(internal, names)
     : inferredMembership(internal, blocks, blockedBy);
 
   return membership.map(({ key, name, inferred, ticketIds, gate }) => {
@@ -65,11 +69,11 @@ export function derivePhases(tickets: Ticket[], dependencies: Dependency[]): Pha
 
 type Membership = Pick<Phase, "key" | "name" | "inferred" | "ticketIds"> & { gate?: string | null };
 
-function explicitMembership(tickets: Ticket[]): Membership[] {
+function explicitMembership(tickets: Ticket[], names: Map<string, string>): Membership[] {
   const keys = [...new Set(tickets.flatMap((it) => (it.fase ? [it.fase] : [])))].sort(compareKey);
   return keys.map((key) => ({
     key,
-    name: null,
+    name: names.get(key) ?? null,
     inferred: false,
     ticketIds: tickets.filter((it) => it.fase === key).map((it) => it.id),
   }));

@@ -33,6 +33,7 @@ export default async function EpicPage({ params }: { params: Promise<{ epic: str
 
   const { nodes, edges } = toFlow(graph, layout);
   const own = graph.tickets.filter((it) => !it.external);
+  const phaseNames = new Map(graph.phases.map((it) => [it.key, it.name]));
   const total = own.length;
 
   return (
@@ -138,7 +139,9 @@ export default async function EpicPage({ params }: { params: Promise<{ epic: str
                         <IssueTitle title={ticket.title} />
                       </a>
                     </td>
-                    <td className="px-4 py-2 text-slate-500">{ticket.fase ?? "–"}</td>
+                    <td className="px-4 py-2 text-slate-500">
+                      {ticket.fase ? faseLabel(ticket.fase, phaseNames.get(ticket.fase)) : "–"}
+                    </td>
                     <td className="px-4 py-2">
                       <StatusBadge status={ticket.status} />
                     </td>
@@ -171,4 +174,8 @@ export default async function EpicPage({ params }: { params: Promise<{ epic: str
       )}
     </main>
   );
+}
+
+function faseLabel(key: string, name: string | null | undefined) {
+  return name ? `${key} · ${name}` : key;
 }

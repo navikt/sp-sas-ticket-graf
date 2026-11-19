@@ -102,6 +102,25 @@ export function parseFase(body: string): string | null {
   return body.match(/^\*\*Fase:\*\*\s*(.+?)\s*$/m)?.[1] ?? null;
 }
 
+export function parseFaseNavn(body: string): Map<string, string> {
+  const names = new Map<string, string>();
+  const lines = body.split(/\r?\n/);
+  const start = lines.findIndex((it) => /^(\*\*Faser:\*\*|#{2,3}\s+Faser)\s*$/.test(it.trim()));
+  if (start < 0) return names;
+
+  for (const line of lines.slice(start + 1)) {
+    const item = line.match(/^(?:[-*]\s+)?(\d+)[.:)]\s+(.+?)\s*$/);
+    if (item) names.set(item[1], faseNavn(item[2]));
+    else if (/^#/.test(line) || (names.size > 0 && /^\S/.test(line))) break;
+  }
+  return names;
+}
+
+function faseNavn(text: string): string {
+  const bold = text.match(/^\*\*(.+?)\*\*/)?.[1];
+  return (bold ?? text).replace(/[.:]\s*$/, "").trim();
+}
+
 export function parseRepos(body: string): string[] {
   const line = body.match(/^\*\*Repo:\*\*(.*)$/m)?.[1];
   if (!line) return [];
@@ -160,6 +179,6 @@ export function buildEpicGraph(epic: string, epicIssues: Issue[]): EpicGraph {
   );
   const counts = countStatuses(sorted.filter((it) => !it.external).map((it) => it.status));
 
-  const phases = derivePhases(sorted, dependencies);
+  const phases = derivePhases(sorted, dependencies, specIssue ? parseFaseNavn(specIssue.body) : new Map());
   return { epic, spec, tickets: sorted, dependencies, phases, counts };
 }

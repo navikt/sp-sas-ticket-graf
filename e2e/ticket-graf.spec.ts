@@ -44,6 +44,8 @@ test("viser grafen for en epic med status, fase og lenke til issuet", async ({ p
   const graph = page.getByRole("region", { name: "Avhengighetsgraf" });
   await expect(graph.getByTestId("ticket")).toHaveCount(9);
   await expect(graph.getByTestId("fase")).toHaveCount(3);
+  await expect(graph.locator('[data-testid="fase"][data-fase="1"]')).toContainText("Grunnmur");
+  await expect(page.getByTestId("phase-step").nth(1)).toContainText("Fase 2 · Skyggemodus");
 
   const ferdig = graph.locator('[data-testid="ticket"][data-number="901"]');
   await expect(ferdig).toHaveAttribute("data-status", "ferdig");

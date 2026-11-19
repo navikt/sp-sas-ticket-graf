@@ -43,6 +43,12 @@ describe("faser fra issue-teksten", () => {
     expect(fase("5")).toMatchObject({ status: "pågår", done: 1, total: 2, finishedAt: null });
   });
 
+  it("henter navnene på fasene fra Faser-listen i specen", async () => {
+    const graph = await graphOf("eksempel", eksempel);
+
+    expect(graph.phases.map((it) => it.name)).toEqual(["Grunnmur", "Skyggemodus", null]);
+  });
+
   it("lar ticketer uten fase stå utenfor når andre ticketer har fase", async () => {
     const graph = await graphOf("eksempel", eksempel);
 

@@ -12,7 +12,7 @@
           "url": "https://github.com/navikt/sas-issues/issues/900",
           "state": "OPEN",
           "closedAt": null,
-          "body": "## Problem\n\nOppdiktet spec for mock.\n",
+          "body": "## Problem\n\nOppdiktet spec for mock.\n\n## Faser\n\n1. **Grunnmur.** Oppdiktet fase for mock.\n2. **Skyggemodus.** Oppdiktet fase for mock.\n",
           "repository": {
             "nameWithOwner": "navikt/sas-issues"
           },
