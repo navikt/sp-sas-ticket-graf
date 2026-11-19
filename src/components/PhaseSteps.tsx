@@ -1,3 +1,4 @@
+import { useId } from "react";
 import { formatDate } from "@/lib/format";
 import type { Phase } from "@/lib/phases";
 
@@ -35,9 +36,15 @@ export function PhaseSteps({ phases }: { phases: Phase[] }) {
                 {phase.status === "ferdig" ? "✓" : phase.key}
               </span>
               <div className="min-w-0">
-                <div className="truncate text-sm font-medium text-slate-800" title={phase.name ?? undefined}>
-                  Fase {phase.key}
-                  {phase.name && <span className="font-normal text-slate-500"> · {phase.name}</span>}
+                <div className="flex min-w-0 items-center gap-1.5">
+                  <span
+                    data-testid="phase-title"
+                    className="truncate text-sm font-semibold text-slate-800"
+                    title={phase.name ?? undefined}
+                  >
+                    {phase.name ?? `Fase ${phase.key}`}
+                  </span>
+                  {phase.description && <PhaseDescription description={phase.description} />}
                 </div>
                 <div className="text-xs tabular-nums text-slate-500">
                   {phase.status === "ferdig" && phase.finishedAt
@@ -56,5 +63,28 @@ export function PhaseSteps({ phases }: { phases: Phase[] }) {
         ))}
       </ol>
     </div>
+  );
+}
+
+function PhaseDescription({ description }: { description: string }) {
+  const id = useId();
+  return (
+    <span className="group relative shrink-0">
+      <button
+        type="button"
+        aria-label="Om fasen"
+        aria-describedby={id}
+        className="flex h-4 w-4 items-center justify-center rounded-full border border-slate-300 text-[10px] font-bold leading-none text-slate-500 hover:border-slate-500 hover:text-slate-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-sky-500"
+      >
+        ?
+      </button>
+      <span
+        id={id}
+        role="tooltip"
+        className="invisible absolute -left-2 top-6 z-20 w-72 rounded-lg bg-slate-800 px-3 py-2 text-xs font-normal leading-relaxed text-white opacity-0 shadow-lg transition-opacity group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100"
+      >
+        {description}
+      </span>
+    </span>
   );
 }

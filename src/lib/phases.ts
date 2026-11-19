@@ -1,10 +1,11 @@
-import type { Dependency, Ticket } from "./tickets";
+import type { Dependency, FaseInfo, Ticket } from "./tickets";
 
 export type PhaseStatus = "ferdig" | "pågår" | "ikke startet";
 
 export interface Phase {
   key: string;
   name: string | null;
+  description: string | null;
   inferred: boolean;
   ticketIds: string[];
   gate: string | null;
@@ -36,7 +37,7 @@ function compareKey(a: string, b: string): number {
 export function derivePhases(
   tickets: Ticket[],
   dependencies: Dependency[],
-  names: Map<string, string> = new Map(),
+  faser: Map<string, FaseInfo> = new Map(),
 ): Phase[] {
   const internal = tickets.filter((it) => !it.external);
   const ids = new Set(internal.map((it) => it.id));
@@ -45,10 +46,10 @@ export function derivePhases(
   const blockedBy = groupBy(edges, (it) => it.blocked, (it) => it.blocker);
 
   const membership = internal.some((it) => it.fase)
-    ? explicitMembership(internal, names)
+    ? explicitMembership(internal, faser)
     : inferredMembership(internal, blocks, blockedBy);
 
-  return membership.map(({ key, name, inferred, ticketIds, gate }) => {
+  return membership.map(({ key, name, description, inferred, ticketIds, gate }) => {
     const members = internal.filter((it) => ticketIds.includes(it.id));
     const done = members.filter((it) => it.status === "ferdig");
     const started = members.some((it) => it.status === "ferdig" || it.status === "pågår");
@@ -56,6 +57,7 @@ export function derivePhases(
     return {
       key,
       name,
+      description: description ?? null,
       inferred,
       ticketIds,
       gate: gate ?? soleSink(ticketIds, blocks),
@@ -67,13 +69,14 @@ export function derivePhases(
   });
 }
 
-type Membership = Pick<Phase, "key" | "name" | "inferred" | "ticketIds"> & { gate?: string | null };
+type Membership = Pick<Phase, "key" | "name" | "inferred" | "ticketIds"> & Partial<Pick<Phase, "description">> & { gate?: string | null };
 
-function explicitMembership(tickets: Ticket[], names: Map<string, string>): Membership[] {
+function explicitMembership(tickets: Ticket[], faser: Map<string, FaseInfo>): Membership[] {
   const keys = [...new Set(tickets.flatMap((it) => (it.fase ? [it.fase] : [])))].sort(compareKey);
   return keys.map((key) => ({
     key,
-    name: names.get(key) ?? null,
+    name: faser.get(key)?.name ?? null,
+    description: faser.get(key)?.description ?? null,
     inferred: false,
     ticketIds: tickets.filter((it) => it.fase === key).map((it) => it.id),
   }));

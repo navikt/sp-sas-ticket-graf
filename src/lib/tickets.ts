@@ -102,23 +102,32 @@ export function parseFase(body: string): string | null {
   return body.match(/^\*\*Fase:\*\*\s*(.+?)\s*$/m)?.[1] ?? null;
 }
 
-export function parseFaseNavn(body: string): Map<string, string> {
-  const names = new Map<string, string>();
+export interface FaseInfo {
+  name: string;
+  description: string | null;
+}
+
+export function parseFaser(body: string): Map<string, FaseInfo> {
+  const faser = new Map<string, FaseInfo>();
+  if (typeof body !== "string") return faser;
   const lines = body.split(/\r?\n/);
   const start = lines.findIndex((it) => /^(\*\*Faser:\*\*|#{2,3}\s+Faser)\s*$/.test(it.trim()));
-  if (start < 0) return names;
+  if (start < 0) return faser;
 
   for (const line of lines.slice(start + 1)) {
     const item = line.match(/^(?:[-*]\s+)?(\d+)[.:)]\s+(.+?)\s*$/);
-    if (item) names.set(item[1], faseNavn(item[2]));
-    else if (/^#/.test(line) || (names.size > 0 && /^\S/.test(line))) break;
+    const fase = item && parseFaseItem(item[2]);
+    if (item && fase) faser.set(item[1], fase);
+    else if (/^#/.test(line) || (faser.size > 0 && /^\S/.test(line))) break;
   }
-  return names;
+  return faser;
 }
 
-function faseNavn(text: string): string {
-  const bold = text.match(/^\*\*(.+?)\*\*/)?.[1];
-  return (bold ?? text).replace(/[.:]\s*$/, "").trim();
+function parseFaseItem(text: string): FaseInfo | null {
+  const bold = text.match(/^\*\*(.+?)\*\*\s*(.*)$/);
+  const name = (bold ? bold[1] : text).replace(/[.:]\s*$/, "").replace(/^\*+|\*+$/g, "").trim();
+  const description = (bold?.[2] ?? "").replace(/\s*Tickets?(?:er)?:.*$/, "").replace(/`/g, "").trim();
+  return name ? { name, description: description || null } : null;
 }
 
 export function parseRepos(body: string): string[] {
@@ -179,6 +188,6 @@ export function buildEpicGraph(epic: string, epicIssues: Issue[]): EpicGraph {
   );
   const counts = countStatuses(sorted.filter((it) => !it.external).map((it) => it.status));
 
-  const phases = derivePhases(sorted, dependencies, specIssue ? parseFaseNavn(specIssue.body) : new Map());
+  const phases = derivePhases(sorted, dependencies, specIssue ? parseFaser(specIssue.body) : new Map());
   return { epic, spec, tickets: sorted, dependencies, phases, counts };
 }

@@ -28,7 +28,7 @@ pnpm dev:mock
 - **Spec:** issuet med labelen `spec-issue` i epicen er specen. Det tegnes ikke som en ticket, men tittelen blir overskriften og lenker til issuet.
 - **Avhengigheter:** GitHubs innebygde «blocked by». En pil går fra blokkereren til ticketen den blokkerer.
 - **Fase:** linjen `**Fase:** <n>` i issue-teksten. Tickets i samme fase tegnes i en egen boks. Boksen blir grønn med datoen for siste lukking når hele fasen er ferdig, og stiplet når ingenting i fasen er påbegynt.
-- **Navn på fasene:** den nummererte listen under `## Faser` (eller `**Faser:**`) i specen, i formen `1. **Navn.** beskrivelse` eller `1. Navn`. Navnet vises etter «Fase <n>» i boksen, i fasestegene og i tabellen.
+- **Navn på fasene:** den nummererte listen under `## Faser` (eller `**Faser:**`) i specen, i formen `1. **Navn.** beskrivelse. Ticketer: #1 og #2.` eller `1. Navn`. Navnet erstatter «Fase <n>» i fasestegene og vises etter «Fase <n>» i boksen og i tabellen. Beskrivelsen fram til `Ticketer:` vises når du holder over «?» ved navnet. Kan ikke listen leses, vises fasene med nummer som før.
 - **Utledede faser:** har ingen issues i epicen `**Fase:**`, deler appen epicen ved utrullingene. En utrulling er en ticket med tittel som «Rulle ut …», «Skru på …», «… i prod», «Fjerne togglen …» eller «Lansere …». Hver ticket havner i fasen til den første utrullingen den leder fram til. Ticketer som kommer etter siste utrulling, samles i fasen «Etter utrulling».
 - **Avslutter fasen:** utrullingen, eller den eneste ticketen i fasen som ingen andre i fasen venter på, merkes med et flagg.
 - **Repoer:** linjen `**Repo:**` i issue-teksten. Repoene vises som merkelapper på ticketen.

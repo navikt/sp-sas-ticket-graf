@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { fetchEpicSummary, fetchEpicIssues, fetchEpics, type Transport } from "./github";
 import { layoutGraph, TICKET_HEIGHT, TICKET_WIDTH } from "./layout";
-import { buildEpicGraph, deriveStatus, isEpicDone, parseFase, parseFaseNavn, parseRepos, type Issue } from "./tickets";
+import { buildEpicGraph, deriveStatus, isEpicDone, parseFase, parseFaser, parseRepos, type Issue } from "./tickets";
 import epics from "../../fixtures/epics.json";
 import eksempel from "../../fixtures/epic-eksempel.json";
 
@@ -149,28 +149,36 @@ describe("parsing av issue-teksten", () => {
 
   it("leser navnene på fasene fra Faser-listen i specen", () => {
     const spec = "## Problem\n\nNoe.\n\n**Faser:**\n\n1. Grunnmur\n2. Skyggemodus \n- 3: Rull ut\n\n## Løsning\n\n1. Ikke en fase\n";
-    expect(parseFaseNavn(spec)).toEqual(
+    expect(parseFaser(spec)).toEqual(
       new Map([
-        ["1", "Grunnmur"],
-        ["2", "Skyggemodus"],
-        ["3", "Rull ut"],
+        ["1", { name: "Grunnmur", description: null }],
+        ["2", { name: "Skyggemodus", description: null }],
+        ["3", { name: "Rull ut", description: null }],
       ]),
     );
-    expect(parseFaseNavn("**Faser:**\r\n1. Grunnmur\r\n")).toEqual(new Map([["1", "Grunnmur"]]));
-    expect(parseFaseNavn("## Problem\n\n1. Ikke en fase\n")).toEqual(new Map());
+    expect(parseFaser("**Faser:**\r\n1. Grunnmur\r\n")).toEqual(new Map([["1", { name: "Grunnmur", description: null }]]));
+    expect(parseFaser("## Problem\n\n1. Ikke en fase\n")).toEqual(new Map());
   });
 
-  it("leser navnene fra en Faser-seksjon der navnet står i fet skrift foran beskrivelsen", () => {
+  it("leser navnet i fet skrift og beskrivelsen fram til ticketene", () => {
     const spec =
       "## Faser\n\nHver ticket har linjen `**Fase:**`.\n\n" +
-      "1. **Skyggedrift og backfill.** Spleis bruker sitt eget grunnlag. Ticketer: #302.\n" +
-      "2. **Verifisering.** Ticket: #328.\n\n## Brukerhistorier\n\n1. Som saksbehandler vil jeg noe\n";
-    expect(parseFaseNavn(spec)).toEqual(
+      "1. **Skyggedrift og backfill.** Spleis bruker `sitt` eget grunnlag. Ticketer: #302 og #303.\n" +
+      "2. **Verifisering.** Ticket: #328.\n" +
+      "3. **Opprydding**\n\n## Brukerhistorier\n\n1. Som saksbehandler vil jeg noe\n";
+    expect(parseFaser(spec)).toEqual(
       new Map([
-        ["1", "Skyggedrift og backfill"],
-        ["2", "Verifisering"],
+        ["1", { name: "Skyggedrift og backfill", description: "Spleis bruker sitt eget grunnlag." }],
+        ["2", { name: "Verifisering", description: null }],
+        ["3", { name: "Opprydding", description: null }],
       ]),
     );
+  });
+
+  it("gir ingen faser når specen mangler eller ikke kan leses", () => {
+    expect(parseFaser("")).toEqual(new Map());
+    expect(parseFaser(null as unknown as string)).toEqual(new Map());
+    expect(parseFaser("## Faser\n\n1. ****\n2.\n")).toEqual(new Map());
   });
 
   it("leser repoene i kodeformat fra Repo-linjen", () => {

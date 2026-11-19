@@ -45,7 +45,15 @@ test("viser grafen for en epic med status, fase og lenke til issuet", async ({ p
   await expect(graph.getByTestId("ticket")).toHaveCount(9);
   await expect(graph.getByTestId("fase")).toHaveCount(3);
   await expect(graph.locator('[data-testid="fase"][data-fase="1"]')).toContainText("Grunnmur");
-  await expect(page.getByTestId("phase-step").nth(1)).toContainText("Fase 2 · Skyggemodus");
+  const steps = page.getByTestId("phase-step");
+  await expect(steps.nth(0).getByTestId("phase-title")).toHaveText("Grunnmur");
+  await expect(steps.nth(2).getByTestId("phase-title")).toHaveText("Fase 3");
+  await expect(steps.nth(1).getByRole("button", { name: "Om fasen" })).toHaveCount(0);
+  const om = steps.nth(0).getByRole("button", { name: "Om fasen" });
+  await expect(page.getByRole("tooltip", { name: "Oppdiktet fase for mock." })).toBeHidden();
+  await om.hover();
+  await expect(page.getByRole("tooltip")).toHaveText("Oppdiktet fase for mock.");
+  await expect(page.getByRole("tooltip")).toBeVisible();
 
   const ferdig = graph.locator('[data-testid="ticket"][data-number="901"]');
   await expect(ferdig).toHaveAttribute("data-status", "ferdig");

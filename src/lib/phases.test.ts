@@ -47,6 +47,7 @@ describe("faser fra issue-teksten", () => {
     const graph = await graphOf("eksempel", eksempel);
 
     expect(graph.phases.map((it) => it.name)).toEqual(["Grunnmur", "Skyggemodus", null]);
+    expect(graph.phases.map((it) => it.description)).toEqual(["Oppdiktet fase for mock.", null, null]);
   });
 
   it("lar ticketer uten fase stå utenfor når andre ticketer har fase", async () => {
