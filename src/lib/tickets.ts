@@ -1,11 +1,12 @@
 import { derivePhases, type Phase } from "./phases";
 
-export type Status = "ferdig" | "pågår" | "klar" | "blokkert";
+export type Status = "ferdig" | "mangler-avklaring" | "pågår" | "klar" | "blokkert";
 
-export const STATUSES: readonly Status[] = ["ferdig", "pågår", "klar", "blokkert"];
+export const STATUSES: readonly Status[] = ["ferdig", "mangler-avklaring", "pågår", "klar", "blokkert"];
 
 export const EPIC_PREFIX = "epic:";
 export const SPEC_LABEL = "spec-issue";
+export const MANGLER_AVKLARING_LABEL = "mangler-avklaring";
 
 export interface Assignee {
   login: string;
@@ -79,10 +80,12 @@ export function epicOf(labels: string[]): string | null {
 
 export function deriveStatus(issue: {
   state: Issue["state"];
+  labels: string[];
   assigneeCount: number;
   openBlockerCount: number;
 }): Status {
   if (issue.state === "CLOSED") return "ferdig";
+  if (issue.labels.includes(MANGLER_AVKLARING_LABEL)) return "mangler-avklaring";
   if (issue.assigneeCount > 0) return "pågår";
   if (issue.openBlockerCount > 0) return "blokkert";
   return "klar";

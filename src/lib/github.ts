@@ -197,6 +197,7 @@ export async function fetchEpicSummary(transport: Transport, epic: string): Prom
     issues.map((it) =>
       deriveStatus({
         state: it.state,
+        labels: it.labels.nodes.map((label) => label.name),
         assigneeCount: it.assignees.totalCount,
         openBlockerCount: it.issueDependenciesSummary.blockedBy,
       }),

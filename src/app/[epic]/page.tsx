@@ -75,18 +75,23 @@ export default async function EpicPage({ params }: { params: Promise<{ epic: str
             <Progress counts={graph.counts} className="mt-2" />
           </div>
           <ul className="flex flex-wrap gap-2" aria-label="Statuser">
-            {STATUSES.map((it) => (
-              <li
-                key={it}
-                data-testid={`count-${it}`}
-                title={statusStyle[it].description}
-                className="flex items-center gap-2 rounded-xl border border-slate-200 px-3 py-1.5 text-sm"
-              >
-                <span className={`h-2.5 w-2.5 rounded-full ${statusStyle[it].dot}`} />
-                <span className="text-slate-600">{statusStyle[it].label}</span>
-                <span className="font-semibold tabular-nums text-slate-900">{graph.counts[it]}</span>
-              </li>
-            ))}
+            {STATUSES.map((it) => {
+              const emphasis = graph.counts[it] > 0 ? statusStyle[it].emphasis : undefined;
+              return (
+                <li
+                  key={it}
+                  data-testid={`count-${it}`}
+                  title={statusStyle[it].description}
+                  className={`flex items-center gap-2 rounded-xl border px-3 py-1.5 text-sm ${emphasis?.chip ?? "border-slate-200"}`}
+                >
+                  <span className={`h-2.5 w-2.5 rounded-full ${statusStyle[it].dot}`} />
+                  <span className={emphasis?.text ?? "text-slate-600"}>{statusStyle[it].label}</span>
+                  <span className={`font-semibold tabular-nums ${emphasis?.text ?? "text-slate-900"}`}>
+                    {graph.counts[it]}
+                  </span>
+                </li>
+              );
+            })}
           </ul>
         </div>
         {graph.phases.length > 0 && <PhaseSteps phases={graph.phases} />}

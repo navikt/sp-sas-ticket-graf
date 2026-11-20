@@ -97,7 +97,7 @@ function EpicCards({ overview, testId }: { overview: EpicOverview[]; testId?: st
               <Progress counts={counts} className="mt-4" />
               <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-500">
                 {STATUSES.filter((it) => counts[it] > 0).map((it) => (
-                  <span key={it} className="inline-flex items-center gap-1.5">
+                  <span key={it} className={`inline-flex items-center gap-1.5 ${statusStyle[it].emphasis?.text ?? ""}`}>
                     <span className={`h-2 w-2 rounded-full ${statusStyle[it].dot}`} />
                     {counts[it]} {statusStyle[it].label.toLowerCase()}
                   </span>

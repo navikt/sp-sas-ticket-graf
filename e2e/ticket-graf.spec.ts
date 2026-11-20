@@ -40,6 +40,7 @@ test("viser grafen for en epic med status, fase og lenke til issuet", async ({ p
   );
   await expect(page.getByTestId("progress-label")).toHaveText("2 av 7 ferdig");
   await expect(page.getByTestId("count-blokkert")).toContainText("2");
+  await expect(page.getByTestId("count-mangler-avklaring")).toContainText("1");
 
   const graph = page.getByRole("region", { name: "Avhengighetsgraf" });
   await expect(graph.getByTestId("ticket")).toHaveCount(9);
@@ -77,7 +78,7 @@ test("viser grafen for en epic med status, fase og lenke til issuet", async ({ p
     "904:klar",
     "905:blokkert",
     "906:blokkert",
-    "907:klar",
+    "907:mangler-avklaring",
   ]);
 
   await expect(graph.locator(".react-flow__edge")).toHaveCount(9);

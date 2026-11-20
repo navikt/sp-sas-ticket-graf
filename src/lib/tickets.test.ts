@@ -13,10 +13,20 @@ async function eksempelGraph() {
 }
 
 describe("deriveStatus", () => {
-  const open = { state: "OPEN" as const, assigneeCount: 0, openBlockerCount: 0 };
+  const open = { state: "OPEN" as const, labels: [] as string[], assigneeCount: 0, openBlockerCount: 0 };
 
   it("er ferdig når issuet er lukket, uansett blokkeringer", () => {
     expect(deriveStatus({ ...open, state: "CLOSED", openBlockerCount: 2 })).toBe("ferdig");
+  });
+
+  it("mangler avklaring når issuet har labelen, også om det er tildelt og blokkert", () => {
+    expect(
+      deriveStatus({ ...open, labels: ["mangler-avklaring"], assigneeCount: 1, openBlockerCount: 1 }),
+    ).toBe("mangler-avklaring");
+  });
+
+  it("er ferdig når issuet er lukket, selv om det fortsatt har labelen mangler-avklaring", () => {
+    expect(deriveStatus({ ...open, state: "CLOSED", labels: ["mangler-avklaring"] })).toBe("ferdig");
   });
 
   it("er pågår når issuet er tildelt, også om det har åpne blokkeringer", () => {
@@ -59,13 +69,14 @@ describe("fetchEpicSummary", () => {
               node("OPEN", 0, 2),
               node("OPEN", 0, 0),
               node("OPEN", 0, 0),
+              node("OPEN", 1, 0, ["mangler-avklaring"]),
             ],
           },
         },
       }) as T;
 
     expect(await fetchEpicSummary(transport, "x")).toEqual({
-      counts: { ferdig: 1, pågår: 1, blokkert: 1, klar: 2 },
+      counts: { ferdig: 1, "mangler-avklaring": 1, pågår: 1, blokkert: 1, klar: 2 },
       deliveredAt: null,
     });
   });
@@ -104,7 +115,7 @@ describe("fetchEpicSummary", () => {
       }) as T;
 
     expect(await fetchEpicSummary(transport, "x")).toEqual({
-      counts: { ferdig: 2, pågår: 0, blokkert: 0, klar: 0 },
+      counts: { ferdig: 2, "mangler-avklaring": 0, pågår: 0, blokkert: 0, klar: 0 },
       deliveredAt: "2026-10-20T10:00:00Z",
     });
   });
@@ -201,15 +212,15 @@ describe("fetchEpics", () => {
 
 describe("isEpicDone", () => {
   it("er ferdig når alle ticketene er ferdige", () => {
-    expect(isEpicDone({ ferdig: 3, pågår: 0, klar: 0, blokkert: 0 })).toBe(true);
+    expect(isEpicDone({ ferdig: 3, "mangler-avklaring": 0, pågår: 0, klar: 0, blokkert: 0 })).toBe(true);
   });
 
   it("er ikke ferdig når noe gjenstår", () => {
-    expect(isEpicDone({ ferdig: 3, pågår: 0, klar: 0, blokkert: 1 })).toBe(false);
+    expect(isEpicDone({ ferdig: 3, "mangler-avklaring": 0, pågår: 0, klar: 0, blokkert: 1 })).toBe(false);
   });
 
   it("er ikke ferdig uten tickets", () => {
-    expect(isEpicDone({ ferdig: 0, pågår: 0, klar: 0, blokkert: 0 })).toBe(false);
+    expect(isEpicDone({ ferdig: 0, "mangler-avklaring": 0, pågår: 0, klar: 0, blokkert: 0 })).toBe(false);
   });
 });
 
@@ -224,9 +235,9 @@ describe("buildEpicGraph", () => {
       904: "klar",
       905: "blokkert",
       906: "blokkert",
-      907: "klar",
+      907: "mangler-avklaring",
     });
-    expect(graph.counts).toEqual({ ferdig: 2, pågår: 1, klar: 2, blokkert: 2 });
+    expect(graph.counts).toEqual({ ferdig: 2, "mangler-avklaring": 1, pågår: 1, klar: 1, blokkert: 2 });
   });
 
   it("tar med blokkeringer fra andre epicer som eksterne tickets", async () => {
@@ -257,7 +268,7 @@ describe("buildEpicGraph", () => {
       url: "https://github.com/navikt/sas-issues/issues/900",
     });
     expect(graph.tickets.map((it) => it.number)).not.toContain(900);
-    expect(graph.counts.klar + graph.counts.blokkert + graph.counts.pågår + graph.counts.ferdig).toBe(7);
+    expect(Object.values(graph.counts).reduce((sum, it) => sum + it, 0)).toBe(7);
   });
 
   it("teller ikke en ekstern ticket to ganger når den blokkerer flere", () => {

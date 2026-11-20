@@ -8,6 +8,7 @@ interface StatusStyle {
   badge: string;
   dot: string;
   color: string;
+  emphasis?: { chip: string; text: string };
 }
 
 export const statusStyle: Record<Status, StatusStyle> = {
@@ -19,6 +20,16 @@ export const statusStyle: Record<Status, StatusStyle> = {
     badge: "bg-emerald-50 text-emerald-700 ring-emerald-600/20",
     dot: "bg-emerald-500",
     color: "#10b981",
+  },
+  "mangler-avklaring": {
+    label: "Mangler avklaring",
+    description: "Åpent med labelen mangler-avklaring",
+    card: "border-rose-300 bg-white",
+    accent: "bg-rose-500",
+    badge: "bg-rose-50 text-rose-700 ring-rose-600/20",
+    dot: "bg-rose-500",
+    color: "#f43f5e",
+    emphasis: { chip: "border-rose-300 bg-rose-50", text: "font-semibold text-rose-700" },
   },
   pågår: {
     label: "Pågår",
