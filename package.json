@@ -17,7 +17,7 @@
     "test:e2e": "playwright test"
   },
   "dependencies": {
-    "@xyflow/react": "^13.0.1",
+    "@xyflow/react": "^13.0.2",
     "elkjs": "^0.12.1",
     "next": "^16.4.6",
     "react": "^19.3.1",
@@ -34,6 +34,6 @@
     "eslint-config-next": "^16.4.6",
     "tailwindcss": "^4.3.5",
     "typescript": "^6.0.3",
-    "vitest": "^5.1.0"
+    "vitest": "^5.1.1"
   }
 }
