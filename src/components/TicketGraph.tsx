@@ -177,6 +177,7 @@ export function TicketGraph({ nodes, edges }: { nodes: FlowNode[]; edges: Edge[]
       fitViewOptions={{ padding: 0.08 }}
       minZoom={0.2}
       maxZoom={1.75}
+      forceColorMode="light"
     >
       <Background variant={BackgroundVariant.Dots} gap={20} size={1.2} color="#cbd5e1" />
       <Controls showInteractive={false} position="bottom-left" />
